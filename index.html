@@ -1,109 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SahiSafar — सही सफ़र | Delhi Metro Route Finder</title>
-  <link rel="stylesheet" href="css/style.css"/>
-  <style>
-    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-    .feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;transition:box-shadow .2s,transform .2s}
-    .feature-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
-    .feature-icon{font-size:28px;margin-bottom:.6rem}
-    .feature-card h3{font-size:14px;font-weight:700;color:var(--text-1);margin-bottom:.3rem}
-    .feature-card p{font-size:12.5px;color:var(--text-3);line-height:1.5}
-    .stats-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:500px;margin:0 auto 2rem}
-    .stat-hero-box{background:rgba(255,255,255,0.15);border-radius:var(--radius-md);padding:.85rem;text-align:center}
-    .stat-hero-val{font-size:26px;font-weight:700;color:#fff;display:block}
-    .stat-hero-lbl{font-size:11px;color:rgba(255,255,255,0.75)}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SahiSafar — सही सफ़र | Delhi Metro Route Finder</title>
+<link rel="stylesheet" href="css/style.css"/>
+<style>
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem}
+.feature-icon{font-size:28px;margin-bottom:.6rem}
+.feature-card h3{font-size:14px;font-weight:700;margin-bottom:.3rem}
+.feature-card p{font-size:12.5px;color:var(--text-3);line-height:1.5}
+.stats-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:500px;margin:0 auto 2rem}
+.stat-hero-box{background:rgba(255,255,255,0.15);border-radius:12px;padding:.85rem;text-align:center}
+.stat-hero-val{font-size:26px;font-weight:700;color:#fff;display:block}
+.stat-hero-lbl{font-size:11px;color:rgba(255,255,255,0.75)}
+</style>
 </head>
 <body>
 <div id="navPlaceholder"></div>
 <main>
-  <section class="hero">
-    <div class="hero-tag">Delhi Metro + RRTS Navigator</div>
-    <h1>Your <span>SahiSafar</span> Starts Here</h1>
-    <p>Step-by-step metro directions, crowd levels, fare estimates and AI travel tips.</p>
-    <div class="stats-hero">
-      <div class="stat-hero-box"><span class="stat-hero-val">10</span><span class="stat-hero-lbl">Metro Lines</span></div>
-      <div class="stat-hero-box"><span class="stat-hero-val">285+</span><span class="stat-hero-lbl">Stations</span></div>
-      <div class="stat-hero-box"><span class="stat-hero-val">Free</span><span class="stat-hero-lbl">Always Free</span></div>
-    </div>
-    <div class="hero-badges">
-      <span class="hero-badge">🟡 Yellow</span>
-      <span class="hero-badge">🔵 Blue</span>
-      <span class="hero-badge">🔴 Red</span>
-      <span class="hero-badge">🟢 Green</span>
-      <span class="hero-badge">🟣 Violet</span>
-      <span class="hero-badge">🚄 RRTS</span>
-    </div>
-  </section>
-  <div class="container">
-    <div class="page-section">
-      <div class="card fade-in">
-        <div class="page-section-title">Find Your Route</div>
-        <div class="form-row-2">
-          <div class="field">
-            <label>From Station</label>
-            <select id="fromStation"><option value="">— Select Station —</option></select>
-          </div>
-          <div class="field">
-            <label>To Station</label>
-            <select id="toStation"><option value="">— Select Station —</option></select>
-          </div>
+<section class="hero">
+  <div class="hero-tag">Delhi Metro + RRTS Navigator</div>
+  <h1>Your <span>SahiSafar</span> Starts Here</h1>
+  <p>Step-by-step metro directions, crowd levels, fare estimates and AI travel tips.</p>
+  <div class="stats-hero">
+    <div class="stat-hero-box"><span class="stat-hero-val">10</span><span class="stat-hero-lbl">Metro Lines</span></div>
+    <div class="stat-hero-box"><span class="stat-hero-val">285+</span><span class="stat-hero-lbl">Stations</span></div>
+    <div class="stat-hero-box"><span class="stat-hero-val">Free</span><span class="stat-hero-lbl">Always Free</span></div>
+  </div>
+  <div class="hero-badges">
+    <span class="hero-badge">🟡 Yellow</span>
+    <span class="hero-badge">🔵 Blue</span>
+    <span class="hero-badge">🔴 Red</span>
+    <span class="hero-badge">🟢 Green</span>
+    <span class="hero-badge">🟣 Violet</span>
+    <span class="hero-badge">🚄 RRTS</span>
+  </div>
+</section>
+<div class="container">
+  <div class="page-section">
+    <div class="card fade-in">
+      <div class="page-section-title">Find Your Route</div>
+      <div class="form-row-2">
+        <div class="field">
+          <label>From Station</label>
+          <select id="fromStation"><option value="">— Select Station —</option></select>
         </div>
-        <div class="field" style="margin-bottom:12px">
-          <label>Or Search by Landmark</label>
-          <input type="text" id="landmarkInput" placeholder="e.g. India Gate, AIIMS, Airport, JNU..."/>
-          <div id="landmarkResult" style="font-size:12px;color:var(--brand);margin-top:4px;min-height:16px"></div>
+        <div class="field">
+          <label>To Station</label>
+          <select id="toStation"><option value="">— Select Station —</option></select>
         </div>
-        <button class="btn btn-primary btn-full" id="findBtn">🗺 Find My Route</button>
       </div>
-    </div>
-    <div class="page-section">
-      <div class="page-section-title">Popular Routes</div>
-      <div class="quick-grid">
-        <button class="quick-btn" id="q1"><span class="q-label">Quick route</span>New Delhi → Rajiv Chowk</button>
-        <button class="quick-btn" id="q2"><span class="q-label">Yellow line</span>Kashmere Gate → Huda City Centre</button>
-        <button class="quick-btn" id="q3"><span class="q-label">Airport Express</span>New Delhi → IGI Airport</button>
-        <button class="quick-btn" id="q4"><span class="q-label">RRTS express</span>Sahibabad → Meerut South</button>
-        <button class="quick-btn" id="q5"><span class="q-label">Blue line</span>Dwarka Sec-21 → Botanical Garden</button>
-        <button class="quick-btn" id="q6"><span class="q-label">RRTS route</span>Anand Vihar ISBT → Ghaziabad</button>
+      <div class="field" style="margin-bottom:12px">
+        <label>Or Search by Landmark</label>
+        <input type="text" id="landmarkInput" placeholder="e.g. India Gate, AIIMS, Airport, JNU..."/>
+        <div id="landmarkResult" style="font-size:12px;color:#1A237E;margin-top:4px;min-height:16px"></div>
       </div>
-    </div>
-    <div class="page-section">
-      <div class="page-section-title">What SahiSafar Offers</div>
-      <div class="features-grid">
-        <div class="feature-card"><div class="feature-icon">🗺</div><h3>Smart Route Finder</h3><p>Shortest path across all metro lines with automatic interchange detection.</p></div>
-        <div class="feature-card"><div class="feature-icon">📊</div><h3>Crowd Forecast</h3><p>Hourly crowd levels so you know before you leave home.</p></div>
-        <div class="feature-card"><div class="feature-icon">💰</div><h3>Fare Estimate</h3><p>Token and Smart Card fare for every journey instantly.</p></div>
-        <div class="feature-card"><div class="feature-icon">🇮🇳</div><h3>Hindi Names</h3><p>Hindi station names to show anyone on the street for directions.</p></div>
-        <div class="feature-card"><div class="feature-icon">🏛</div><h3>Landmark Search</h3><p>Type India Gate or AIIMS and we find the nearest station.</p></div>
-        <div class="feature-card"><div class="feature-icon">🛡</div><h3>Safety Tips</h3><p>Emergency numbers, accessibility info and peak-hour advisories.</p></div>
-      </div>
+      <button class="btn btn-primary btn-full" id="findBtn">🗺 Find My Route</button>
     </div>
   </div>
+  <div class="page-section">
+    <div class="page-section-title">Popular Routes</div>
+    <div class="quick-grid">
+      <button class="quick-btn" id="q1"><span class="q-label">Quick route</span>New Delhi → Rajiv Chowk</button>
+      <button class="quick-btn" id="q2"><span class="q-label">Yellow line</span>Kashmere Gate → Huda City Centre</button>
+      <button class="quick-btn" id="q3"><span class="q-label">Airport Express</span>New Delhi → IGI Airport</button>
+      <button class="quick-btn" id="q4"><span class="q-label">RRTS express</span>Sahibabad → Meerut South</button>
+      <button class="quick-btn" id="q5"><span class="q-label">Blue line</span>Dwarka Sec-21 → Botanical Garden</button>
+      <button class="quick-btn" id="q6"><span class="q-label">RRTS route</span>Anand Vihar ISBT → Ghaziabad</button>
+    </div>
+  </div>
+  <div class="page-section">
+    <div class="page-section-title">What SahiSafar Offers</div>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">🗺</div><h3>Smart Route Finder</h3><p>Shortest path across all metro lines with automatic interchange detection.</p></div>
+      <div class="feature-card"><div class="feature-icon">📊</div><h3>Crowd Forecast</h3><p>Hourly crowd levels so you know before you leave home.</p></div>
+      <div class="feature-card"><div class="feature-icon">💰</div><h3>Fare Estimate</h3><p>Token and Smart Card fare for every journey instantly.</p></div>
+      <div class="feature-card"><div class="feature-icon">🇮🇳</div><h3>Hindi Names</h3><p>Hindi station names to show anyone on the street for directions.</p></div>
+      <div class="feature-card"><div class="feature-icon">🏛</div><h3>Landmark Search</h3><p>Type India Gate or AIIMS and we find the nearest station.</p></div>
+      <div class="feature-card"><div class="feature-icon">🛡</div><h3>Safety Tips</h3><p>Emergency numbers, accessibility info and peak-hour advisories.</p></div>
+    </div>
+  </div>
+</div>
 </main>
 <div id="footerPlaceholder"></div>
 <script src="js/data.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/components.js"></script>
 <script>
-  // Render nav and footer
-  document.getElementById('navPlaceholder').innerHTML = renderNav('home');
-  document.getElementById('footerPlaceholder').innerHTML = renderFooter();
-  fixNavForRoot();
+// Nav and footer
+document.getElementById('navPlaceholder').innerHTML = renderNav('home');
+document.getElementById('footerPlaceholder').innerHTML = renderFooter();
+fixNavForRoot();
 
-  // Fill station dropdowns
-  function allStations() {
-    const s = new Set();
-    for (const ld of Object.values(LINES))
-      for (const st of ld.stations) s.add(st);
-    return Array.from(s).sort();
+// Fill station dropdowns
+var stationSet = new Set();
+for (var lineKey in LINES) {
+  var stations = LINES[lineKey].stations;
+  for (var i = 0; i < stations.length; i++) {
+    stationSet.add(stations[i]);
   }
-  allStations().forEach(function(s) {
-    ['fromStation','toStation'].forEach(function(id) {
-      var o = document.createElement('option');
-      o.value = s; o.textContent = s;
-      document.getElementById(id).append
+}
+var stationList = Array.from(stationSet).sort();
+for (var i = 0; i < stationList.length; i++) {
+  var s = stationList[i];
+  var o1 = document.createElement('option');
+  o1.value = s; o1.textContent = s;
+  document.getElementById('fromStation').appendChild(o1);
+  var o2 = document.createElement('option');
+  o2.value = s; o2.textContent = s;
+  document.getElementById('toStation').appendChild(o2);
+}
+
+// Landmark search
+document.getElementById('landmarkInput').addEventListener('input', function() {
+  var v = this.value;
+  var r = document.getElementById('landmarkResult');
+  if (!v.trim()) { r.textContent = ''; return; }
+  var m = resolveLandmark(v);
+  if (m) {
+    r.textContent = '📍 Nearest station: ' + m;
+    document.getElementById('toStation').value = m;
+  } else {
+    r.textContent = 'Not found. Try: India Gate, AIIMS, Airport...';
+  }
+});
+
+// Quick route buttons
+document.getElementById('q1').addEventListener('click', function(){ setQ('New Delhi','Rajiv Chowk'); });
+document.getElementById('q2').addEventListener('click', function(){ setQ('Kashmere Gate','Huda City Centre'); });
+document.getElementById('q3').addEventListener('click', function(){ setQ('New Delhi','IGI Airport Terminal 3'); });
+document.getElementById('q4').addEventListener('click', function(){ setQ('Sahibabad','Meerut South'); });
+document.getElementById('q5').addEventListener('click', function(){ setQ('Dwarka Sec-21','Botanical Garden'); });
+document.getElementById('q6').addEventListener('click', function(){ setQ('Anand Vihar ISBT','Ghaziabad'); });
+
+function setQ(from, to) {
+  document.getElementById('fromStation').value = from;
+  document.getElementById('toStation').value = to;
+  document.querySelector('.card').scrollIntoView({behavior:'smooth'});
+}
+
+// Find route
+document.getElementById('findBtn').addEventListener('click', function() {
+  var f = document.getElementById('fromStation').value;
+  var t = document.getElementById('toStation').value;
+  if (!f || !t) { alert('Please select both From and To stations.'); return; }
+  if (f === t) { alert('From and To cannot be the same.'); return; }
+  window.location.href = 'pages/route-finder.html?from=' + encodeURIComponent(f) + '&to=' + encodeURIComponent(t);
+});
+</script>
+</body>
+</html>
