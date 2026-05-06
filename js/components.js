@@ -35,7 +35,7 @@ function renderFooter(){
       <div class="footer-credit">
         <span>Built with ❤️ for every Delhi commuter</span>
         <span>•</span>
-        <a href="https://www.linkedin.com/in/riya-aggarwal31072003" target="_blank" class="linkedin-link">
+        <a href="https://www.linkedin.com/in/riya-aggarwal-28429b260/" target="_blank" class="linkedin-link">
           <span>in</span> Connect on LinkedIn
         </a>
       </div>
