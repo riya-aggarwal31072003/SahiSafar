@@ -1,15 +1,13 @@
 const LINES = {
   Yellow:{color:"#F9A825",textColor:"#5D4037",shortName:"Yellow",name:"Yellow Line (Line 2)",route:"Samaypur Badli ↔ Huda City Centre",stations:["Samaypur Badli","Rohini Sector 18-19","Haiderpur Badli Mor","Jahangirpuri","Adarsh Nagar","Azadpur","Model Town","GTB Nagar","Vishwavidyalaya","Vidhan Sabha","Civil Lines","Kashmere Gate","Chandni Chowk","Chawri Bazar","New Delhi","Rajiv Chowk","Patel Chowk","Central Secretariat","Udyog Bhawan","Lok Kalyan Marg","Jor Bagh","INA","AIIMS","Green Park","Hauz Khas","Malviya Nagar","Saket","Qutab Minar","Chhatarpur","Sultanpur","Ghitorni","Arjangarh","Guru Dronacharya","Sikanderpur","MG Road","IFFCO Chowk","Huda City Centre"]},
 
-  Blue:{color:"#1565C0",textColor:"#fff",shortName:"Blue",name:"Blue Line (Line 3/4)",route:"Dwarka Sec-21 ↔ Noida Electronic City / Vaishali",stations:["Dwarka Sec-21","Dwarka Sec-22","Dwarka Sec-23","Dwarka Sec-24","Dwarka Sector 10","Dwarka Sector 11","Dwarka Sector 12","Dwarka Sector 13","Dwarka Sector 14","Dwarka","Dwarka Mor","Nawada","Uttam Nagar West","Uttam Nagar East","Janakpuri West","Janakpuri East","Tilak Nagar","Subhash Nagar","Tagore Garden","Rajouri Garden","Ramesh Nagar","Moti Nagar","Kirti Nagar","Shadipur","Patel Nagar","Rajendra Place","Karol Bagh","Jhandewalan","Ramakrishna Ashram Marg","Rajiv Chowk","Barakhamba Road","Mandi House","Pragati Maidan","Indraprastha","Yamuna Bank","Akshardham","Mayur Vihar Phase-1","Mayur Vihar Extension","New Ashok Nagar","Noida Sector 15","Noida Sector 16","Noida Sector 18","Botanical Garden","Noida City Centre","Golf Course","Noida Sector 34","Noida Sector 52","Noida Sector 61","Noida Sector 59","Noida Sector 62","Noida Electronic City"]},
+  Blue:{color:"#1565C0",textColor:"#fff",shortName:"Blue",name:"Blue Line (Line 3/4)",route:"Dwarka Sec-21 ↔ Noida Electronic City",stations:["Dwarka Sec-21","Dwarka Sec-22","Dwarka Sec-23","Dwarka Sec-24","Dwarka Sector 10","Dwarka Sector 11","Dwarka Sector 12","Dwarka Sector 13","Dwarka Sector 14","Dwarka","Dwarka Mor","Nawada","Uttam Nagar West","Uttam Nagar East","Janakpuri West","Janakpuri East","Tilak Nagar","Subhash Nagar","Tagore Garden","Rajouri Garden","Ramesh Nagar","Moti Nagar","Kirti Nagar","Shadipur","Patel Nagar","Rajendra Place","Karol Bagh","Jhandewalan","Ramakrishna Ashram Marg","Rajiv Chowk","Barakhamba Road","Mandi House","Pragati Maidan","Indraprastha","Yamuna Bank","Akshardham","Mayur Vihar Phase-1","Mayur Vihar Extension","New Ashok Nagar","Noida Sector 15","Noida Sector 16","Noida Sector 18","Botanical Garden","Noida City Centre","Golf Course","Noida Sector 34","Noida Sector 52","Noida Sector 61","Noida Sector 59","Noida Sector 62","Noida Electronic City"]},
 
   BlueVaishali:{color:"#1565C0",textColor:"#fff",shortName:"Blue",name:"Blue Line Branch (Vaishali)",route:"Yamuna Bank ↔ Vaishali",stations:["Yamuna Bank","Kaushambi","Vaishali"]},
 
-  Red:{color:"#C62828",textColor:"#fff",shortName:"Red",name:"Red Line (Line 1)",route:"Rithala ↔ Shaheed Sthal",stations:["Rithala","Rohini West","Rohini East","Pitampura","Kohat Enclave","Netaji Subhash Place","Keshav Puram","Kanhaiya Nagar","Inderlok","Shastri Nagar","Pratap Nagar","Pulbangash","Tis Hazari","Kashmere Gate","Shastri Park","Seelampur","Welcome","Shahdara","Mansarovar Park","Jhilmil","Dilshad Garden","Shaheed Nagar","Raj Bagh","Vivek Vihar","Anand Vihar ISBT","Kaushambi","Vaishali"]},
+  Red:{color:"#C62828",textColor:"#fff",shortName:"Red",name:"Red Line (Line 1)",route:"Rithala ↔ Vaishali",stations:["Rithala","Rohini West","Rohini East","Pitampura","Kohat Enclave","Netaji Subhash Place","Keshav Puram","Kanhaiya Nagar","Inderlok","Shastri Nagar","Pratap Nagar","Pulbangash","Tis Hazari","Kashmere Gate","Shastri Park","Seelampur","Welcome","Shahdara","Mansarovar Park","Jhilmil","Dilshad Garden","Shaheed Nagar","Raj Bagh","Vivek Vihar","Anand Vihar ISBT","Kaushambi","Vaishali"]},
 
   Green:{color:"#2E7D32",textColor:"#fff",shortName:"Green",name:"Green Line (Line 5)",route:"Inderlok ↔ Brigadier Hoshiyar Singh",stations:["Inderlok","Ashok Park Main","Punjabi Bagh West","ESI Hospital","Rajouri Garden","Madipur","Paschim Vihar East","Paschim Vihar West","Peeragarhi","Udyog Nagar","Surajmal Stadium","Nangloi Railway Station","Nangloi","Rajdhani Park","Mundka Industrial Area","Mundka","Bahadurgarh City Park","Brigadier Hoshiyar Singh"]},
-
-  GreenBranch:{color:"#2E7D32",textColor:"#fff",shortName:"Green",name:"Green Line Branch",route:"Inderlok ↔ Ashok Park Main",stations:["Inderlok","Ashok Park Main"]},
 
   Violet:{color:"#6A1B9A",textColor:"#fff",shortName:"Violet",name:"Violet Line (Line 6)",route:"Kashmere Gate ↔ Escorts Mujesar",stations:["Kashmere Gate","Lal Quila","Jama Masjid","Delhi Gate","ITO","Mandi House","Janpath","Central Secretariat","Khan Market","Jawaharlal Nehru Stadium","Jangpura","Lajpat Nagar","Moolchand","Kailash Colony","Nehru Place","Kalkaji Mandir","Govind Puri","Harkesh Nagar Okhla","Jasola Apollo","Sarita Vihar","Mohan Estate","Tughlakabad","Badarpur Border","Sarai","NHPC Chowk","Mewala Maharajpur","Sector 28","Badkal Mor","Old Faridabad","Neelam Chowk Ajronda","Bata Chowk","Escorts Mujesar"]},
 
@@ -23,9 +21,9 @@ const LINES = {
 
   Grey:{color:"#607D8B",textColor:"#fff",shortName:"Grey",name:"Grey Line (Line 9)",route:"Dwarka ↔ Dhansa Bus Stand",stations:["Dwarka","Nangli","Najafgarh","Dhansa Bus Stand"]},
 
-  Rapid:{color:"#FF6F00",textColor:"#fff",shortName:"Rapid",name:"Rapid Metro Gurgaon",route:"Sikanderpur ↔ Sector 56",stations:["Sikanderpur","Phase 1","Moulsari Avenue","Cybercity","Vodafone Belvedere Towers","Sector 42-43","Sector 53-54","Sector 54 Chowk","Sector 55-56"]},
+  RRTS:{color:"#006064",textColor:"#fff",shortName:"RRTS",name:"Namo Bharat RRTS",route:"Sarai Kale Khan ↔ Modipuram (Meerut)",stations:["Sarai Kale Khan","Jangpura RRTS","New Ashok Nagar","Anand Vihar ISBT","Sahibabad","Ghaziabad","Guldhar","Duhai","Duhai Depot","Muradnagar","Modi Nagar South","Modi Nagar North","Meerut South"]},
 
-  RRTS:{color:"#006064",textColor:"#fff",shortName:"RRTS",name:"Namo Bharat RRTS",route:"Anand Vihar ISBT ↔ Modipuram (Meerut)",stations:["Anand Vihar ISBT","Sahibabad","Ghaziabad","Guldhar","Duhai","Duhai Depot","Muradnagar","Modi Nagar South","Modi Nagar North","Meerut South","Partapur","Rithani","Shatabdi Nagar","Begumpul","Meerut North","Modipuram"]}
+  MeerutMetro:{color:"#00838F",textColor:"#fff",shortName:"Meerut",name:"Meerut Metro",route:"Meerut South ↔ Modipuram",stations:["Meerut South","Partapur","Rithani","Shatabdi Nagar","Brahampuri","Meerut Central","Bhaisali","Begumpul","MES Colony","Daurli","Meerut North","Modipuram Depot","Modipuram"]}
 };
 
 const INTERCHANGES={
@@ -50,12 +48,13 @@ const INTERCHANGES={
   "ESI Hospital":["Green","Pink"],
   "Welcome":["Red","Pink"],
   "Netaji Subhash Place":["Red","Pink"],
-  "New Ashok Nagar":["Blue","Aqua"],
+  "New Ashok Nagar":["Blue","RRTS"],
   "Yamuna Bank":["Blue","BlueVaishali"],
-  "Sikanderpur":["Yellow","Rapid"],
-  "Punjabi Bagh West":["Green"],
-  "Majlis Park":["Pink"],
-  "Vaishali":["Red","BlueVaishali"]
+  "Vaishali":["Red","BlueVaishali"],
+  "Meerut South":["RRTS","MeerutMetro"],
+  "Shatabdi Nagar":["RRTS","MeerutMetro"],
+  "Begumpul":["RRTS","MeerutMetro"],
+  "Modipuram":["RRTS","MeerutMetro"]
 };
 
 const LANDMARKS={
@@ -72,37 +71,41 @@ const LANDMARKS={
   "terminal 3":"IGI Airport Terminal 3","t3":"IGI Airport Terminal 3",
   "terminal 1":"Terminal 1 IGI Airport","t1":"Terminal 1 IGI Airport",
   "new delhi railway":"New Delhi","ndls":"New Delhi","new delhi station":"New Delhi",
-  "aiims":"AIIMS","aiims hospital":"AIIMS","all india institute":"AIIMS",
-  "iit delhi":"IIT","iit":"IIT","indian institute of technology":"IIT",
+  "aiims":"AIIMS","aiims hospital":"AIIMS",
+  "iit delhi":"IIT","iit":"IIT",
   "jnu":"Hauz Khas","jawaharlal nehru university":"Hauz Khas",
-  "delhi university":"Vishwavidyalaya","du":"Vishwavidyalaya","du north campus":"Vishwavidyalaya",
+  "delhi university":"Vishwavidyalaya","du":"Vishwavidyalaya",
   "pragati maidan":"Pragati Maidan","bharat mandapam":"Pragati Maidan",
-  "karol bagh market":"Karol Bagh","karol bagh":"Karol Bagh",
-  "chandni chowk market":"Chandni Chowk","chandni chowk":"Chandni Chowk",
-  "sarojini nagar market":"Sarojini Nagar","sarojini nagar":"Sarojini Nagar",
-  "lajpat nagar market":"Lajpat Nagar","lajpat nagar":"Lajpat Nagar",
-  "nehru place market":"Nehru Place","nehru place":"Nehru Place",
-  "dlf mall noida":"Noida Sector 18","great india place":"Noida Sector 18","gip mall":"Noida Sector 18",
-  "meerut":"Meerut South","meerut city":"Meerut South","meerut south":"Meerut South",
+  "karol bagh":"Karol Bagh","karol bagh market":"Karol Bagh",
+  "chandni chowk":"Chandni Chowk","chandni chowk market":"Chandni Chowk",
+  "sarojini nagar":"Sarojini Nagar","sarojini nagar market":"Sarojini Nagar",
+  "lajpat nagar":"Lajpat Nagar","lajpat nagar market":"Lajpat Nagar",
+  "nehru place":"Nehru Place","nehru place market":"Nehru Place",
+  "dlf mall noida":"Noida Sector 18","great india place":"Noida Sector 18",
+  "meerut":"Meerut South","meerut city":"Meerut South",
+  "meerut central":"Meerut Central","meerut central station":"Meerut Central",
   "meerut north":"Meerut North","modipuram":"Modipuram",
-  "anand vihar railway":"Anand Vihar ISBT","anand vihar isbt":"Anand Vihar ISBT",
-  "ghaziabad railway":"Ghaziabad","gzb":"Ghaziabad","ghaziabad":"Ghaziabad",
-  "sahibabad":"Sahibabad",
-  "select citywalk":"Saket","saket mall":"Saket",
-  "dlf promenade":"Vasant Vihar","dlf promenade mall":"Vasant Vihar",
-  "cyber city":"Cybercity","cyberhub":"Cybercity",
-  "cyber hub":"Cybercity","gurgaon cyber city":"Cybercity",
-  "mg road gurgaon":"MG Road","mg road":"MG Road",
-  "huda city centre":"Huda City Centre","iffco chowk":"IFFCO Chowk",
+  "anand vihar":"Anand Vihar ISBT","anand vihar isbt":"Anand Vihar ISBT",
+  "anand vihar railway":"Anand Vihar ISBT",
+  "ghaziabad":"Ghaziabad","gzb":"Ghaziabad","ghaziabad railway":"Ghaziabad",
+  "sahibabad":"Sahibabad","sarai kale khan":"Sarai Kale Khan",
+  "hazrat nizamuddin":"Hazrat Nizamuddin","nizamuddin":"Hazrat Nizamuddin",
+  "saket mall":"Saket","select citywalk":"Saket",
+  "cyber city":"New Ashok Nagar","cyberhub":"New Ashok Nagar",
+  "mg road":"MG Road","mg road gurgaon":"MG Road",
+  "huda city centre":"Huda City Centre",
   "faridabad":"Escorts Mujesar","old faridabad":"Old Faridabad",
   "vaishali":"Vaishali","kaushambi":"Kaushambi",
-  "botanical garden":"Botanical Garden","noida botanical garden":"Botanical Garden",
+  "botanical garden":"Botanical Garden",
   "greater noida":"Depot Station","pari chowk":"Pari Chowk",
   "najafgarh":"Najafgarh","dwarka":"Dwarka",
   "rohini":"Rohini West","pitampura":"Pitampura",
   "janakpuri":"Janakpuri West","dwarka mor":"Dwarka Mor",
   "uttam nagar":"Uttam Nagar East","tagore garden":"Tagore Garden",
-  "rajouri garden":"Rajouri Garden","kirti nagar":"Kirti Nagar"
+  "rajouri garden":"Rajouri Garden","kirti nagar":"Kirti Nagar",
+  "brahampuri":"Brahampuri","bhaisali":"Bhaisali",
+  "mes colony":"MES Colony","daurli":"Daurli",
+  "partapur":"Partapur","rithani":"Rithani"
 };
 
 const HINDI_NAMES={
@@ -136,20 +139,26 @@ const HINDI_NAMES={
   "Rohini West":"रोहिणी वेस्ट",
   "Rohini East":"रोहिणी ईस्ट",
   "Meerut South":"मेरठ साउथ",
+  "Meerut Central":"मेरठ सेंट्रल",
   "Meerut North":"मेरठ नॉर्थ",
   "Modipuram":"मोदीपुरम",
+  "Modipuram Depot":"मोदीपुरम डिपो",
   "Ghaziabad":"ग़ाज़ियाबाद",
   "Sahibabad":"साहिबाबाद",
+  "Sarai Kale Khan":"सराय काले खान",
   "Adarsh Nagar":"आदर्श नगर",
   "Jahangirpuri":"जहाँगीरपुरी",
   "Samaypur Badli":"समयपुर बादली",
-  "Kashmere Gate":"कश्मीरी गेट",
   "Lal Quila":"लाल किला",
   "Jama Masjid":"जामा मस्जिद",
   "Begumpul":"बेगमपुल",
   "Shatabdi Nagar":"शताब्दी नगर",
   "Rithani":"रिठानी",
   "Partapur":"पार्तापुर",
+  "Brahampuri":"ब्रह्मपुरी",
+  "Bhaisali":"भैसाली",
+  "MES Colony":"एम.ई.एस. कॉलोनी",
+  "Daurli":"दौरली",
   "Muradnagar":"मुरादनगर",
   "Duhai":"दुहाई",
   "Guldhar":"गुलधर",
@@ -164,7 +173,6 @@ const HINDI_NAMES={
   "Tughlakabad":"तुगलकाबाद",
   "Nehru Place":"नेहरू प्लेस",
   "Kalkaji Mandir":"कालकाजी मंदिर",
-  "Okhla Bird Sanctuary":"ओखला पक्षी अभयारण्य",
   "Kalindi Kunj":"कालिंदी कुंज",
   "Pari Chowk":"परी चौक",
   "Greater Kailash":"ग्रेटर कैलाश",
@@ -174,7 +182,6 @@ const HINDI_NAMES={
   "Dilshad Garden":"दिलशाद गार्डन",
   "Vivek Vihar":"विवेक विहार",
   "Janakpuri West":"जनकपुरी वेस्ट",
-  "Uttam Nagar West":"उत्तम नगर वेस्ट",
   "Uttam Nagar East":"उत्तम नगर ईस्ट",
   "Tagore Garden":"टैगोर गार्डन",
   "Moti Nagar":"मोती नगर",
@@ -195,7 +202,9 @@ const HINDI_NAMES={
   "Guru Dronacharya":"गुरु द्रोणाचार्य",
   "Shiv Vihar":"शिव विहार",
   "Majlis Park":"मजलिस पार्क",
-  "Gokulpuri":"गोकुलपुरी"
+  "Gokulpuri":"गोकुलपुरी",
+  "New Ashok Nagar":"न्यू अशोक नगर",
+  "Jangpura RRTS":"जंगपुरा आर.आर.टी.एस."
 };
 
 const CROWD_SCHEDULE={
