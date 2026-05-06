@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FAQ — SahiSafar</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+<div id="navPlaceholder"></div>
+<main>
+  <div class="container">
+    <div class="page-section-title" style="margin-bottom:1.5rem">❓ Frequently Asked Questions</div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="page-section-title">Using SahiSafar</div>
+      <div id="faq1"></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="page-section-title">Tickets & Fares</div>
+      <div id="faq2"></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="page-section-title">Metro Rules & Safety</div>
+      <div id="faq3"></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="page-section-title">RRTS — Namo Bharat</div>
+      <div id="faq4"></div>
+    </div>
+    <div class="tip-card info" style="margin-top:1rem">
+      <span class="tip-icon">📞</span>
+      <div><strong>DMRC Helpline:</strong> 155370 &nbsp;|&nbsp; <strong>RRTS Helpline:</strong> 1800-180-0188 &nbsp;|&nbsp; <strong>Emergency:</strong> 112</div>
+    </div>
+  </div>
+</main>
+<div id="footerPlaceholder"></div>
+<script src="../js/data.js"></script>
+<script src="../js/components.js"></script>
+<script>
+document.getElementById('navPlaceholder').innerHTML=renderNav('faq');
+document.getElementById('footerPlaceholder').innerHTML=renderFooter();
+const faqs={
+  faq1:[
+    {q:"How do I find a route on SahiSafar?",a:"Go to Route Finder. Select your From and To station, then tap Find Route. You will see the full journey with interchanges, time, fare and AI tips."},
+    {q:"I don't know the station name — what do I do?",a:"Use the Landmark Search box. Type a place like India Gate, AIIMS, Airport or JNU. SahiSafar will automatically find the nearest metro station for you."},
+    {q:"What is an interchange station?",a:"An interchange is where two or more metro lines meet. You get off one train and board another at the same station. SahiSafar shows exactly where to change."},
+    {q:"Does SahiSafar work offline?",a:"Yes! Once the page loads, the Route Finder works fully offline. All station data is built into the app. No internet needed after first load."},
+  ],
+  faq2:[
+    {q:"How much does a metro ticket cost?",a:"Delhi Metro fares range from Rs 10 to Rs 60 depending on distance. SahiSafar shows an estimated fare for every route. Always check at the station counter for exact fare."},
+    {q:"What is a Smart Card and how do I get one?",a:"A Smart Card is a reusable metro card you tap at entry and exit gates. It gives 10% discount on every journey. Buy at any metro station counter for Rs 100 which includes Rs 50 travel balance and Rs 50 deposit."},
+    {q:"Is the Airport Express fare different?",a:"Yes. The Airport Express Orange Line costs approximately Rs 60 for the full route. It is separate from regular metro fare and needs separate token or Smart Card balance."},
+    {q:"Does RRTS use Delhi Metro tickets?",a:"No. Namo Bharat RRTS requires a separate RRTS Card or single journey QR ticket. Delhi Metro Smart Cards are not valid on RRTS. Buy at RRTS station counters."},
+  ],
+  faq3:[
+    {q:"What items are not allowed on Delhi Metro?",a:"Weapons, sharp objects, inflammable materials, large luggage and liquids over 1 litre are not permitted. All passengers go through security scanners at entry."},
+    {q:"Are there separate coaches for women?",a:"Yes. The first and last coaches of every Delhi Metro train are reserved exclusively for women. Men are not permitted in these coaches during operating hours."},
+    {q:"What are the metro timings?",a:"Delhi Metro generally runs from 6:00 AM to 11:00 PM daily. Frequency is every 2 to 10 minutes depending on the line and time of day. Airport Express runs from 4:45 AM to 11:30 PM."},
+    {q:"What should I do in an emergency inside the metro?",a:"Press the red emergency button inside the coach to alert the driver. You can also use the intercom system. Metro helpline is 155370. Police is 112. Do not pull the emergency chain unnecessarily."},
+  ],
+  faq4:[
+    {q:"What is Namo Bharat RRTS?",a:"Namo Bharat is India's first Regional Rapid Transit System connecting Delhi to Meerut via Ghaziabad. It runs at up to 180 km per hour with average speed around 100 km per hour — much faster than regular metro."},
+    {q:"Where does RRTS currently operate?",a:"The operational section runs from Sahibabad to Modipuram in Meerut. The full Delhi to Meerut corridor is 82 km. Integration with Delhi Metro is planned at several stations."},
+    {q:"How do I board the RRTS?",a:"Reach an RRTS station like Ghaziabad, Duhai or Meerut South. Buy a QR ticket or RRTS Card at the counter. Trains run every 15 minutes. Business class coaches are in the middle of the train."},
+    {q:"What is the RRTS fare?",a:"Standard class fares start from Rs 20 and go up to Rs 100 or more for the full Delhi to Meerut corridor. Business class is approximately double the standard fare. Check exact fares at NCRTC counters."},
+  ],
+};
+Object.entries(faqs).forEach(([id,items])=>{
+  document.getElementById(id).innerHTML=items.map((f,i)=>`
+    <div class="faq-item">
+      <button class="faq-q" onclick="tf('a-${id}-${i}',this)">${f.q}<span class="arrow">▾</span></button>
+      <div class="faq-a" id="a-${id}-${i}">${f.a}</div>
+    </div>`).join('');
+});
+function tf(id,btn){
+  document.getElementById(id).classList.toggle('open');
+  btn.classList.toggle('open');
+}
+</script>
+</body>
+</html>

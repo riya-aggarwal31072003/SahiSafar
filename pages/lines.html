@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Metro Lines — SahiSafar</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    .line-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1rem}
+    .line-header{display:flex;align-items:center;gap:14px;padding:1.25rem 1.5rem;cursor:pointer}
+    .line-color-bar{width:6px;height:52px;border-radius:4px;flex-shrink:0}
+    .line-info{flex:1}
+    .line-name{font-size:15px;font-weight:700}
+    .line-route{font-size:12px;color:var(--text-3);margin-top:2px}
+    .line-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+    .line-toggle{font-size:20px;color:var(--text-3);transition:transform .2s;margin-left:auto}
+    .line-body{display:none;padding:0 1.5rem 1.25rem;border-top:1px solid var(--border)}
+    .line-body.open{display:block}
+    .station-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+    .station-pill{background:var(--surface-3);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--text-2);cursor:pointer;border:1px solid var(--border);transition:all .15s}
+    .station-pill:hover{background:var(--surface-2);border-color:var(--brand-light);color:var(--brand)}
+    .station-pill.ic{background:#FFF3E0;border-color:#FFCC80;color:#E65100;font-weight:600}
+  </style>
+</head>
+<body>
+<div id="navPlaceholder"></div>
+<main>
+  <div class="container">
+    <div class="page-section-title" style="margin-bottom:1.5rem">🚇 All Metro Lines & Stations</div>
+    <div id="linesContainer"></div>
+  </div>
+</main>
+<div id="footerPlaceholder"></div>
+<script src="../js/data.js"></script>
+<script src="../js/components.js"></script>
+<script>
+document.getElementById('navPlaceholder').innerHTML=renderNav('lines');
+document.getElementById('footerPlaceholder').innerHTML=renderFooter();
+const container=document.getElementById('linesContainer');
+Object.entries(LINES).forEach(([key,ld])=>{
+  const card=document.createElement('div');
+  card.className='line-card fade-in';
+  const pills=ld.stations.map(s=>`<span class="station-pill${INTERCHANGES[s]?' ic':''}" onclick="window.location.href='route-finder.html?from='+encodeURIComponent('${s}')">${s}</span>`).join('');
+  card.innerHTML=`
+    <div class="line-header" onclick="toggle('b-${key}',this)">
+      <div class="line-color-bar" style="background:${ld.color}"></div>
+      <div class="line-info">
+        <div class="line-name">${ld.name}</div>
+        <div class="line-route">${ld.route}</div>
+        <div class="line-meta">
+          <span class="chip">${ld.stations.length} stations</span>
+          <span class="chip chip-warning">${ld.stations.filter(s=>INTERCHANGES[s]).length} interchanges</span>
+        </div>
+      </div>
+      <div class="line-toggle">▾</div>
+    </div>
+    <div class="line-body" id="b-${key}">
+      <div style="font-size:11px;color:var(--text-3);margin-top:8px">🟠 Orange = interchange station (tap to set as From station)</div>
+      <div class="station-pills">${pills}</div>
+    </div>`;
+  container.appendChild(card);
+});
+function toggle(id,h){
+  const b=document.getElementById(id),a=h.querySelector('.line-toggle');
+  b.classList.toggle('open');
+  a.style.transform=b.classList.contains('open')?'rotate(180deg)':'';
+}
+</script>
+</body>
+</html>

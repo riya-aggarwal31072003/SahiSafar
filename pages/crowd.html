@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crowd Forecast — SahiSafar</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    .crowd-hero{background:linear-gradient(135deg,var(--brand),var(--brand-light));color:#fff;border-radius:var(--radius-xl);padding:2rem;text-align:center;margin-bottom:1.5rem}
+    .crowd-now-val{font-size:52px;font-weight:700;display:block;margin:8px 0}
+    .hour-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+    @media(max-width:600px){.hour-grid{grid-template-columns:repeat(4,1fr)}}
+    .hour-cell{border-radius:var(--radius-sm);padding:8px 4px;text-align:center}
+    .hour-time{font-size:10px;font-weight:600;color:var(--text-2);margin-bottom:4px}
+    .hour-bar{height:32px;border-radius:4px;margin-bottom:4px}
+    .toggle-row{display:flex;gap:8px;margin-bottom:1rem}
+    .toggle-btn{flex:1;padding:10px;border:1.5px solid var(--border-strong);background:var(--surface);border-radius:var(--radius-md);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;color:var(--text-2);transition:all .15s}
+    .toggle-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .advice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:1rem}
+    .advice-card{border-radius:var(--radius-md);padding:1rem;border:1px solid transparent}
+    .advice-card.green{background:var(--success-bg);border-color:#A5D6A7}
+    .advice-card.red{background:var(--danger-bg);border-color:#EF9A9A}
+  </style>
+</head>
+<body>
+<div id="navPlaceholder"></div>
+<main>
+  <div class="container">
+    <div id="crowdHero" class="crowd-hero"></div>
+    <div class="toggle-row">
+      <button class="toggle-btn active" id="btnW" onclick="setDay('weekday')">📅 Weekday</button>
+      <button class="toggle-btn" id="btnWE" onclick="setDay('weekend')">🎉 Weekend</button>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="page-section-title">24-Hour Crowd Forecast</div>
+      <div class="hour-grid" id="hourGrid"></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="page-section-title">Best & Worst Times to Travel</div>
+      <div class="advice-grid" id="adviceGrid"></div>
+    </div>
+    <div class="card">
+      <div class="page-section-title">Tips for Busy Hours</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="tip-card info"><span class="tip-icon">🚪</span><div>Board from the <strong>first or last coach</strong> — always less crowded than middle coaches.</div></div>
+        <div class="tip-card warning"><span class="tip-icon">👩</span><div><strong>Ladies coaches</strong> are at both ends of every train. Always comfortable for women.</div></div>
+        <div class="tip-card success"><span class="tip-icon">🎒</span><div>Keep your <strong>bag in front</strong> during rush hours to avoid pickpocketing.</div></div>
+        <div class="tip-card info"><span class="tip-icon">🪑</span><div>Yellow seats are reserved for <strong>senior citizens, pregnant women and differently-abled</strong> persons. Please respect this.</div></div>
+        <div class="tip-card success"><span class="tip-icon">📱</span><div>Check SahiSafar crowd levels <strong>before leaving home</strong> — save time, travel comfortably.</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+<div id="footerPlaceholder"></div>
+<script src="../js/data.js"></script>
+<script src="../js/components.js"></script>
+<script>
+document.getElementById('navPlaceholder').innerHTML=renderNav('crowd');
+document.getElementById('footerPlaceholder').innerHTML=renderFooter();
+let day='weekday';
+const now=new Date(),h=now.getHours(),isWE=now.getDay()===0||now.getDay()===6;
+if(isWE){day='weekend';document.getElementById('btnW').classList.remove('active');document.getElementById('btnWE').classList.add('active');}
+function fmt(h){return h===0?'12AM':h<12?h+'AM':h===12?'12PM':(h-12)+'PM';}
+function setDay(d){
+  day=d;
+  document.getElementById('btnW').classList.toggle('active',d==='weekday');
+  document.getElementById('btnWE').classList.toggle('active',d==='weekend');
+  render();
+}
+function renderHero(){
+  const lv=CROWD_SCHEDULE[isWE?'weekend':'weekday'][h];
+  document.getElementById('crowdHero').innerHTML=`
+    <div style="font-size:11px;font-weight:600;letter-spacing:1px;opacity:.7;text-transform:uppercase">Right Now — ${fmt(h)}</div>
+    <span class="crowd-now-val">${CROWD_EMOJIS[lv]}</span>
+    <div style="font-size:22px;font-weight:700;margin-bottom:4px">${CROWD_LABELS[lv]}</div>
+    <div style="font-size:14px;opacity:.85">${['Nearly empty — great time!','Light crowd — comfortable.','Moderate crowd — some standing.','Heavy — brace for rush!','Very heavy — extremely crowded!'][lv]}</div>`;
+}
+function render(){
+  const sched=CROWD_SCHEDULE[day];
+  const grid=document.getElementById('hourGrid');
+  grid.innerHTML='';
+  sched.forEach((lv,i)=>{
+    const isNow=i===h;
+    const cell=document.createElement('div');
+    cell.className='hour-cell';
+    cell.style.outline=isNow?'2px solid '+CROWD_COLORS[lv]:'';
+    cell.style.borderRadius='var(--radius-sm)';
+    cell.innerHTML=`<div class="hour-time">${fmt(i)}${isNow?' ◀':''}</div><div class="hour-bar" style="background:${CROWD_COLORS[lv]};opacity:${0.3+lv*0.18}"></div><div style="font-size:13px">${CROWD_EMOJIS[lv]}</div>`;
+    grid.appendChild(cell);
+  });
+  const adv=document.getElementById('adviceGrid');
+  adv.innerHTML='';
+  sched.map((v,i)=>({v,i})).filter(x=>x.v<=1&&x.i>=5).slice(0,3).forEach(x=>{
+    adv.innerHTML+=`<div class="advice-card green"><div style="font-size:13px;font-weight:700;margin-bottom:4px">✅ ${fmt(x.i)} — ${CROWD_LABELS[x.v]}</div><div style="font-size:12.5px;color:var(--text-2)">Great time to travel. Trains are comfortable and seats available.</div></div>`;
+  });
+  sched.map((v,i)=>({v,i})).filter(x=>x.v>=3).slice(0,3).forEach(x=>{
+    adv.innerHTML+=`<div class="advice-card red"><div style="font-size:13px;font-weight:700;margin-bottom:4px">⚠️ ${fmt(x.i)} — ${CROWD_LABELS[x.v]}</div><div style="font-size:12.5px;color:var(--text-2)">Peak hours. Delay your trip by 30 min if possible.</div></div>`;
+  });
+}
+renderHero();
+render();
+</script>
+</body>
+</html>
