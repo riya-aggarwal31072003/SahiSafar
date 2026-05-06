@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SahiSafar — सही सफ़र | Delhi Metro Route Finder</title>
   <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+    .feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;transition:box-shadow .2s,transform .2s}
+    .feature-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .feature-icon{font-size:28px;margin-bottom:.6rem}
+    .feature-card h3{font-size:14px;font-weight:700;color:var(--text-1);margin-bottom:.3rem}
+    .feature-card p{font-size:12.5px;color:var(--text-3);line-height:1.5}
+    .stats-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:500px;margin:0 auto 2rem}
+    .stat-hero-box{background:rgba(255,255,255,0.15);border-radius:var(--radius-md);padding:.85rem;text-align:center}
+    .stat-hero-val{font-size:26px;font-weight:700;color:#fff;display:block}
+    .stat-hero-lbl{font-size:11px;color:rgba(255,255,255,0.75)}
+  </style>
 </head>
 <body>
 <div id="navPlaceholder"></div>
@@ -32,26 +44,32 @@
       <div class="card fade-in">
         <div class="page-section-title">Find Your Route</div>
         <div class="form-row-2">
-          <div class="field"><label>From Station</label><select id="fromStation"><option value="">— Select —</option></select></div>
-          <div class="field"><label>To Station</label><select id="toStation"><option value="">— Select —</option></select></div>
+          <div class="field">
+            <label>From Station</label>
+            <select id="fromStation"><option value="">— Select Station —</option></select>
+          </div>
+          <div class="field">
+            <label>To Station</label>
+            <select id="toStation"><option value="">— Select Station —</option></select>
+          </div>
         </div>
         <div class="field" style="margin-bottom:12px">
           <label>Or Search by Landmark</label>
-          <input type="text" id="landmarkInput" placeholder="e.g. India Gate, AIIMS, Airport..." oninput="lookupLandmark(this.value)"/>
+          <input type="text" id="landmarkInput" placeholder="e.g. India Gate, AIIMS, Airport, JNU..."/>
           <div id="landmarkResult" style="font-size:12px;color:var(--brand);margin-top:4px;min-height:16px"></div>
         </div>
-        <button class="btn btn-primary btn-full" onclick="goToRoute()">🗺 Find My Route</button>
+        <button class="btn btn-primary btn-full" id="findBtn">🗺 Find My Route</button>
       </div>
     </div>
     <div class="page-section">
       <div class="page-section-title">Popular Routes</div>
       <div class="quick-grid">
-        <button class="quick-btn" onclick="setQuick('New Delhi','Rajiv Chowk')"><span class="q-label">Quick route</span>New Delhi → Rajiv Chowk</button>
-        <button class="quick-btn" onclick="setQuick('Kashmere Gate','Huda City Centre')"><span class="q-label">Yellow line</span>Kashmere Gate → Huda City Centre</button>
-        <button class="quick-btn" onclick="setQuick('New Delhi','IGI Airport Terminal 3')"><span class="q-label">Airport Express</span>New Delhi → IGI Airport</button>
-        <button class="quick-btn" onclick="setQuick('Sahibabad','Meerut South')"><span class="q-label">RRTS express</span>Sahibabad → Meerut South</button>
-        <button class="quick-btn" onclick="setQuick('Dwarka Sec-21','Botanical Garden')"><span class="q-label">Blue line</span>Dwarka → Botanical Garden</button>
-        <button class="quick-btn" onclick="setQuick('Anand Vihar ISBT','Ghaziabad')"><span class="q-label">RRTS route</span>Anand Vihar → Ghaziabad</button>
+        <button class="quick-btn" id="q1"><span class="q-label">Quick route</span>New Delhi → Rajiv Chowk</button>
+        <button class="quick-btn" id="q2"><span class="q-label">Yellow line</span>Kashmere Gate → Huda City Centre</button>
+        <button class="quick-btn" id="q3"><span class="q-label">Airport Express</span>New Delhi → IGI Airport</button>
+        <button class="quick-btn" id="q4"><span class="q-label">RRTS express</span>Sahibabad → Meerut South</button>
+        <button class="quick-btn" id="q5"><span class="q-label">Blue line</span>Dwarka Sec-21 → Botanical Garden</button>
+        <button class="quick-btn" id="q6"><span class="q-label">RRTS route</span>Anand Vihar ISBT → Ghaziabad</button>
       </div>
     </div>
     <div class="page-section">
@@ -72,9 +90,20 @@
 <script src="js/engine.js"></script>
 <script src="js/components.js"></script>
 <script>
+  // Render nav and footer
   document.getElementById('navPlaceholder').innerHTML = renderNav('home');
   document.getElementById('footerPlaceholder').innerHTML = renderFooter();
   fixNavForRoot();
-  function allStations(){const s=new Set();for(const ld of Object.values(LINES))for(const st of ld.stations)s.add(st);return Array.from(s).sort();}
-  allStations().forEach(s=>{['fromStation','toStation'].forEach(id=>{const o=document.createElement('option');o.value=o.textContent=s;document.getElementById(id).appendChild(o);});});
-  function lookupLandmark(v){const r=document.getElementById('landmarkResult');if(!v.trim()){r.textContent='
+
+  // Fill station dropdowns
+  function allStations() {
+    const s = new Set();
+    for (const ld of Object.values(LINES))
+      for (const st of ld.stations) s.add(st);
+    return Array.from(s).sort();
+  }
+  allStations().forEach(function(s) {
+    ['fromStation','toStation'].forEach(function(id) {
+      var o = document.createElement('option');
+      o.value = s; o.textContent = s;
+      document.getElementById(id).append
