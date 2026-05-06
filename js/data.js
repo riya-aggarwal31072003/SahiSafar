@@ -8,20 +8,30 @@ const LINES = {
   Magenta:{color:"#880E4F",textColor:"#fff",shortName:"Magenta",name:"Magenta Line (Line 8)",route:"Janakpuri West ↔ Botanical Garden",stations:["Janakpuri West","Dabri Mor-Janakpuri South","Dashrathpuri","Palam","Sadar Bazar Cantonment","Terminal 1 IGI Airport","Shankar Vihar","Vasant Vihar","Munirka","RK Puram","IIT","Hauz Khas","Panchsheel Park","Chirag Delhi","Greater Kailash","Nehru Enclave","Kalkaji Mandir","Okhla NSIC","Sukhdev Vihar","Jamia Millia Islamia","Okhla Vihar","Jasola Vihar Shaheen Bagh","Kalindi Kunj","Okhla Bird Sanctuary","Botanical Garden"]},
   Orange:{color:"#E65100",textColor:"#fff",shortName:"Airport",name:"Airport Express (Orange Line)",route:"New Delhi ↔ Dwarka Sec-21",stations:["New Delhi","Shivaji Stadium","Dhaula Kuan","Delhi Aerocity","IGI Airport Terminal 3","Dwarka Sec-21"]},
   Aqua:{color:"#00897B",textColor:"#fff",shortName:"Aqua",name:"Aqua Line",route:"Botanical Garden ↔ Depot Station",stations:["Botanical Garden","Sector 101","Sector 81","Sector 83","Sector 85","Sector 137","Sector 142","Sector 143","Sector 144","Sector 145","Sector 146","Sector 147","Sector 148","Pari Chowk","Alpha 1","Delta 1","GNIDA Office","Depot Station"]},
-  RRTS:{color:"#006064",textColor:"#fff",shortName:"RRTS",name:"Namo Bharat RRTS",route:"Sahibabad ↔ Modipuram (Meerut)",stations:["Sahibabad","Ghaziabad","Guldhar","Duhai","Duhai Depot","Muradnagar","Modi Nagar South","Modi Nagar North","Meerut South","Partapur","Rithani","Shatabdi Nagar","Begumpul","Modipuram"]}
+  RRTS:{color:"#006064",textColor:"#fff",shortName:"RRTS",name:"Namo Bharat RRTS",route:"Anand Vihar ISBT ↔ Modipuram (Meerut)",stations:["Anand Vihar ISBT","Sahibabad","Ghaziabad","Guldhar","Duhai","Duhai Depot","Muradnagar","Modi Nagar South","Modi Nagar North","Meerut South","Partapur","Rithani","Shatabdi Nagar","Begumpul","Modipuram"]}
 };
 
 const INTERCHANGES={
-  "Rajiv Chowk":["Yellow","Blue"],"Kashmere Gate":["Yellow","Red","Violet"],
-  "Inderlok":["Red","Green"],"INA":["Yellow","Pink"],
-  "Central Secretariat":["Yellow","Violet"],"Mandi House":["Blue","Violet"],
-  "Lajpat Nagar":["Violet","Pink"],"Kalkaji Mandir":["Violet","Magenta"],
-  "Botanical Garden":["Blue","Magenta","Aqua"],"Mayur Vihar Phase-1":["Blue","Pink"],
-  "Janakpuri West":["Blue","Magenta"],"Rajouri Garden":["Blue","Green"],
-  "Hauz Khas":["Yellow","Magenta"],"Azadpur":["Yellow","Pink"],
-  "Anand Vihar ISBT":["Red","Pink"],"New Delhi":["Yellow","Orange"],
-  "Dwarka Sec-21":["Blue","Orange"],"ESI Hospital":["Green","Pink"],
-  "Welcome":["Red","Pink"],"Netaji Subhash Place":["Red","Pink"],
+  "Rajiv Chowk":["Yellow","Blue"],
+  "Kashmere Gate":["Yellow","Red","Violet"],
+  "Inderlok":["Red","Green"],
+  "INA":["Yellow","Pink"],
+  "Central Secretariat":["Yellow","Violet"],
+  "Mandi House":["Blue","Violet"],
+  "Lajpat Nagar":["Violet","Pink"],
+  "Kalkaji Mandir":["Violet","Magenta"],
+  "Botanical Garden":["Blue","Magenta","Aqua"],
+  "Mayur Vihar Phase-1":["Blue","Pink"],
+  "Janakpuri West":["Blue","Magenta"],
+  "Rajouri Garden":["Blue","Green"],
+  "Hauz Khas":["Yellow","Magenta"],
+  "Azadpur":["Yellow","Pink"],
+  "Anand Vihar ISBT":["Red","Pink","RRTS"],
+  "New Delhi":["Yellow","Orange"],
+  "Dwarka Sec-21":["Blue","Orange"],
+  "ESI Hospital":["Green","Pink"],
+  "Welcome":["Red","Pink"],
+  "Netaji Subhash Place":["Red","Pink"],
   "New Ashok Nagar":["Blue","Aqua"]
 };
 
@@ -42,7 +52,8 @@ const LANDMARKS={
   "lajpat nagar market":"Lajpat Nagar","nehru place market":"Nehru Place",
   "dlf mall noida":"Noida Sector 18","great india place":"Noida Sector 18",
   "meerut":"Meerut South","meerut city":"Meerut South",
-  "anand vihar railway":"Anand Vihar ISBT"
+  "anand vihar railway":"Anand Vihar ISBT",
+  "ghaziabad railway":"Ghaziabad","gzb":"Ghaziabad"
 };
 
 const HINDI_NAMES={
@@ -56,7 +67,12 @@ const HINDI_NAMES={
   "IGI Airport Terminal 3":"एयरपोर्ट टर्मिनल 3","Mandi House":"मण्डी हाउस",
   "ITO":"आई.टी.ओ.","Azadpur":"आज़ादपुर","Vishwavidyalaya":"विश्वविद्यालय",
   "Rajouri Garden":"राजौरी गार्डन","Pitampura":"पीतमपुरा",
-  "Meerut South":"मेरठ साउथ","Ghaziabad":"ग़ाज़ियाबाद"
+  "Meerut South":"मेरठ साउथ","Ghaziabad":"ग़ाज़ियाबाद",
+  "Adarsh Nagar":"आदर्श नगर","Sahibabad":"साहिबाबाद",
+  "Modipuram":"मोदीपुरम","Begumpul":"बेगमपुल",
+  "Shatabdi Nagar":"शताब्दी नगर","Rithani":"रिठानी",
+  "Partapur":"पार्तापुर","Muradnagar":"मुरादनगर",
+  "Duhai":"दुहाई","Guldhar":"गुलधर"
 };
 
 const CROWD_SCHEDULE={
@@ -69,8 +85,12 @@ const CROWD_COLORS=["#4CAF50","#8BC34A","#FF9800","#F44336","#B71C1C"];
 const CROWD_EMOJIS=["🟢","🟡","🟠","🔴","🔴"];
 
 function calculateFare(stops){
-  if(stops<=2)return 10;if(stops<=5)return 20;if(stops<=12)return 30;
-  if(stops<=21)return 40;if(stops<=32)return 50;return 60;
+  if(stops<=2)return 10;
+  if(stops<=5)return 20;
+  if(stops<=12)return 30;
+  if(stops<=21)return 40;
+  if(stops<=32)return 50;
+  return 60;
 }
 
 function resolveLandmark(input){
