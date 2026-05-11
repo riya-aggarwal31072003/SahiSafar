@@ -1,131 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Route Finder — SahiSafar</title>
-  <link rel="stylesheet" href="../css/style.css"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Route Finder — SahiSafar</title>
+<link rel="stylesheet" href="../css/style.css"/>
 </head>
 <body>
 <div id="navPlaceholder"></div>
 <main>
-  <div class="container">
-    <div class="card fade-in" style="margin-bottom:1rem">
-      <div class="page-section-title">🗺 Route Finder</div>
-      <div class="form-row-2">
-        <div class="field"><label>From Station</label><select id="fromStation"><option value="">— Select —</option></select></div>
-        <div class="field"><label>To Station</label><select id="toStation"><option value="">— Select —</option></select></div>
+<div class="container">
+  <div class="card fade-in" style="margin-bottom:1rem">
+    <div class="page-section-title">Route Finder</div>
+    <div class="form-row-2">
+      <div class="field">
+        <label>From Station</label>
+        <select id="fromStation"><option value="">Select Station</option></select>
       </div>
-      <div class="field" style="margin-bottom:12px">
-        <label>Or Search by Landmark</label>
-        <input type="text" id="landmarkInput" placeholder="India Gate, AIIMS, Airport..." oninput="doLandmark(this.value)"/>
-        <div id="landmarkHint" style="font-size:12px;color:var(--brand);margin-top:4px;min-height:16px"></div>
+      <div class="field">
+        <label>To Station</label>
+        <select id="toStation"><option value="">Select Station</option></select>
       </div>
-      <button class="btn btn-primary btn-full" onclick="findRoute()">🔍 Find Route</button>
     </div>
-    <div class="quick-grid" style="margin-bottom:1rem">
-      <button class="quick-btn" onclick="qr('New Delhi','Rajiv Chowk')"><span class="q-label">Quick</span>New Delhi → Rajiv Chowk</button>
-      <button class="quick-btn" onclick="qr('Kashmere Gate','Huda City Centre')"><span class="q-label">Yellow</span>Kashmere Gate → Huda City Centre</button>
-      <button class="quick-btn" onclick="qr('New Delhi','IGI Airport Terminal 3')"><span class="q-label">Airport</span>New Delhi → IGI Airport</button>
-      <button class="quick-btn" onclick="qr('Sahibabad','Meerut South')"><span class="q-label">RRTS</span>Sahibabad → Meerut South</button>
+    <div class="field" style="margin-bottom:12px">
+      <label>Or Search by Landmark</label>
+      <input type="text" id="landmarkInput" placeholder="India Gate, AIIMS, Airport..."/>
+      <div id="landmarkHint" style="font-size:12px;color:#1A237E;margin-top:4px;min-height:16px"></div>
     </div>
-    <div id="resultArea">
-      <div class="empty-state"><div class="empty-icon">🚇</div><p>Select stations above and tap <strong>Find Route</strong>.</p></div>
+    <button class="btn btn-primary btn-full" id="findBtn">Find Route</button>
+  </div>
+  <div class="quick-grid" style="margin-bottom:1rem">
+    <button class="quick-btn" id="q1"><span class="q-label">Quick</span>New Delhi to Rajiv Chowk</button>
+    <button class="quick-btn" id="q2"><span class="q-label">Yellow</span>Kashmere Gate to Huda City Centre</button>
+    <button class="quick-btn" id="q3"><span class="q-label">Airport</span>New Delhi to IGI Airport</button>
+    <button class="quick-btn" id="q4"><span class="q-label">RRTS</span>Anand Vihar ISBT to Meerut South</button>
+  </div>
+  <div id="resultArea">
+    <div class="empty-state">
+      <div class="empty-icon">🚇</div>
+      <p>Select stations above and tap Find Route.</p>
     </div>
   </div>
+</div>
 </main>
 <div id="footerPlaceholder"></div>
 <script src="../js/data.js"></script>
 <script src="../js/engine.js"></script>
 <script src="../js/components.js"></script>
 <script>
-document.getElementById('navPlaceholder').innerHTML=renderNav('route');
-document.getElementById('footerPlaceholder').innerHTML=renderFooter();
-function allStations(){const s=new Set();for(const ld of Object.values(LINES))for(const st of ld.stations)s.add(st);return Array.from(s).sort();}
-allStations().forEach(s=>{['fromStation','toStation'].forEach(id=>{const o=document.createElement('option');o.value=o.textContent=s;document.getElementById(id).appendChild(o);});});
-const params=new URLSearchParams(window.location.search);
-if(params.get('from'))document.getElementById('fromStation').value=params.get('from');
-if(params.get('to'))document.getElementById('toStation').value=params.get('to');
-if(params.get('from')&&params.get('to'))findRoute();
-function doLandmark(v){const h=document.getElementById('landmarkHint');if(!v.trim()){h.textContent='';return;}const m=resolveLandmark(v);if(m){h.textContent='📍 '+m;document.getElementById('toStation').value=m;}else h.textContent='Not found. Try: India Gate, AIIMS, Airport...';}
-function qr(f,t){document.getElementById('fromStation').value=f;document.getElementById('toStation').value=t;findRoute();}
-function findRoute(){
-  const from=document.getElementById('fromStation').value,to=document.getElementById('toStation').value;
-  const area=document.getElementById('resultArea');
-  if(!from||!to){area.innerHTML='<div class="error-card">Please select both stations.</div>';return;}
-  if(from===to){area.innerHTML='<div class="error-card">From and To cannot be the same.</div>';return;}
-  area.innerHTML='<div class="loading"><span class="spinner"></span>Finding your SahiSafar...</div>';
-  setTimeout(()=>{
-    const graph=buildGraph(),result=dijkstra(graph,from,to);
-    if(!result){area.innerHTML='<div class="error-card">No route found between these stations.</div>';return;}
-    const{path}=result;
-    const segments=buildSegments(path);
-    const stops=path.length-1,interchanges=segments.length-1;
-    const mins=Math.round(stops*2.5+interchanges*5),fareObj=calculateFare(stops);
-    const crowd=getCrowdLevel();
-    const crowdLevel=CROWD_SCHEDULE[crowd.isWeekend?'weekend':'weekday'][crowd.hour];
-    let html=`<div class="card fade-in" style="margin-bottom:1rem">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:1rem">
-        <div>
-          <div style="font-size:17px;font-weight:700">${from} → ${to}</div>
-          <div style="font-size:12px;color:var(--text-3);margin-top:2px">${LINES[segments[0].line].name}${segments.length>1?' + '+interchanges+' interchange(s)':''}</div>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <span class="chip chip-info">🚉 ${stops} stops</span>
-          <span class="chip chip-success">⏱ ~${mins} min</span>
-          <span class="chip chip-warning">💰 Token ₹${fareObj.token} | Card ₹${fareObj.smart}</span>
-          <span class="chip" style="background:${CROWD_COLORS[crowdLevel]}20;color:${CROWD_COLORS[crowdLevel]}">${CROWD_EMOJIS[crowdLevel]} ${CROWD_LABELS[crowdLevel]}</span>
-        </div>
-      </div>
-      <div style="overflow-x:auto;padding:1rem 0"><div style="display:flex;align-items:flex-start;min-width:max-content" id="track"></div></div>
-      <div id="segList" style="margin-top:1rem"></div>
-    </div>`;
-    const tips=generateAITips(segments,path,from,to);
-    html+=`<div class="card fade-in">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
-        <span style="background:var(--brand);color:#fff;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">AI TIPS</span>
-        <span style="font-size:14px;font-weight:600">Smart Travel Advice</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${tips.map(t=>`<div class="tip-card ${t.color}"><span style="font-size:16px;flex-shrink:0">${t.icon}</span><div>${t.text}</div></div>`).join('')}
-      </div>
-    </div>`;
-    area.innerHTML=html;
-    const track=document.getElementById('track');
-    segments.forEach((seg,si)=>{
-      const ld=LINES[seg.line];
-      seg.stations.forEach((st,i)=>{
-        const isEnd=(si===0&&i===0)||(si===segments.length-1&&i===seg.stations.length-1);
-        const isChange=i===seg.stations.length-1&&si<segments.length-1;
-        const d=document.createElement('div');
-        d.style.cssText='display:flex;flex-direction:column;align-items:center;gap:5px';
-        d.innerHTML=`<div style="width:${isEnd?20:14}px;height:${isEnd?20:14}px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2.5px ${ld.color};background:${isEnd?ld.color:'#fff'}"></div>
-          <div style="font-size:11px;max-width:72px;text-align:center;line-height:1.35;font-weight:${(i===0||i===seg.stations.length-1)?'600':'400'};color:${(i===0||i===seg.stations.length-1)?'#0D0F1A':'#767B99'}">${st}${isChange?'<div style="background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;border-radius:4px;font-size:9px;padding:1px 5px;margin-top:2px">Change here</div>':''}</div>`;
+document.getElementById('navPlaceholder').innerHTML = renderNav('route');
+document.getElementById('footerPlaceholder').innerHTML = renderFooter();
+
+// Fill dropdowns
+var stationSet = new Set();
+for (var lk in LINES) {
+  var sts = LINES[lk].stations;
+  for (var i = 0; i < sts.length; i++) stationSet.add(sts[i]);
+}
+var stationList = Array.from(stationSet).sort();
+for (var i = 0; i < stationList.length; i++) {
+  var s = stationList[i];
+  var o1 = document.createElement('option'); o1.value = s; o1.textContent = s;
+  document.getElementById('fromStation').appendChild(o1);
+  var o2 = document.createElement('option'); o2.value = s; o2.textContent = s;
+  document.getElementById('toStation').appendChild(o2);
+}
+
+// Load from URL params
+var params = new URLSearchParams(window.location.search);
+if (params.get('from')) document.getElementById('fromStation').value = params.get('from');
+if (params.get('to')) document.getElementById('toStation').value = params.get('to');
+if (params.get('from') && params.get('to')) doFind();
+
+// Landmark search
+document.getElementById('landmarkInput').addEventListener('input', function() {
+  var v = this.value;
+  var h = document.getElementById('landmarkHint');
+  if (!v.trim()) { h.textContent = ''; return; }
+  var m = resolveLandmark(v);
+  if (m) { h.textContent = 'Nearest station: ' + m; document.getElementById('toStation').value = m; }
+  else h.textContent = 'Not found. Try: India Gate, AIIMS, Airport...';
+});
+
+// Quick buttons
+document.getElementById('q1').onclick = function() { setQ('New Delhi','Rajiv Chowk'); };
+document.getElementById('q2').onclick = function() { setQ('Kashmere Gate','Huda City Centre'); };
+document.getElementById('q3').onclick = function() { setQ('New Delhi','IGI Airport Terminal 3'); };
+document.getElementById('q4').onclick = function() { setQ('Anand Vihar ISBT','Meerut South'); };
+
+function setQ(f, t) {
+  document.getElementById('fromStation').value = f;
+  document.getElementById('toStation').value = t;
+  doFind();
+}
+
+document.getElementById('findBtn').onclick = function() { doFind(); };
+
+function doFind() {
+  var from = document.getElementById('fromStation').value;
+  var to = document.getElementById('toStation').value;
+  var area = document.getElementById('resultArea');
+  if (!from || !to) { area.innerHTML = '<div class="error-card">Please select both stations.</div>'; return; }
+  if (from === to) { area.innerHTML = '<div class="error-card">From and To cannot be the same.</div>'; return; }
+  area.innerHTML = '<div class="loading"><span class="spinner"></span>Finding your SahiSafar...</div>';
+
+  setTimeout(function() {
+    var graph = buildGraph();
+    var result = dijkstra(graph, from, to);
+    if (!result) { area.innerHTML = '<div class="error-card">No route found. These stations may not be connected yet.</div>'; return; }
+
+    var path = result.path;
+    var segments = buildSegments(path);
+    if (!segments || segments.length === 0) { area.innerHTML = '<div class="error-card">Could not build route segments. Please try again.</div>'; return; }
+
+    var stops = path.length - 1;
+    var interchanges = segments.length - 1;
+    var mins = Math.round(stops * 2.5 + interchanges * 5);
+    var fareObj = calculateFare(stops);
+    var crowd = getCrowdLevel();
+    var crowdLevel = CROWD_SCHEDULE[crowd.isWeekend ? 'weekend' : 'weekday'][crowd.hour];
+
+    var html = '<div class="card fade-in" style="margin-bottom:1rem">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:1rem">';
+    html += '<div><div style="font-size:17px;font-weight:700">' + from + ' to ' + to + '</div>';
+    html += '<div style="font-size:12px;color:#767B99;margin-top:2px">' + LINES[segments[0].line].name + (segments.length > 1 ? ' + ' + interchanges + ' interchange(s)' : '') + '</div></div>';
+    html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+    html += '<span class="chip chip-info">🚉 ' + stops + ' stops</span>';
+    html += '<span class="chip chip-success">⏱ ~' + mins + ' min</span>';
+    html += '<span class="chip chip-warning">🎫 Token ₹' + fareObj.token + '</span>';
+    html += '<span class="chip chip-success">💳 Card ₹' + fareObj.smart + '</span>';
+    html += '<span class="chip" style="background:' + CROWD_COLORS[crowdLevel] + '20;color:' + CROWD_COLORS[crowdLevel] + '">' + CROWD_EMOJIS[crowdLevel] + ' ' + CROWD_LABELS[crowdLevel] + '</span>';
+    html += '</div></div>';
+
+    // Journey visual track
+    html += '<div style="overflow-x:auto;padding:1rem 0"><div style="display:flex;align-items:flex-start;min-width:max-content" id="track"></div></div>';
+
+    // Segment list
+    html += '<div id="segList" style="margin-top:1rem"></div>';
+    html += '</div>';
+
+    // AI Tips
+    var tips = generateAITips(segments, path, from, to);
+    html += '<div class="card fade-in">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">';
+    html += '<span style="background:#1A237E;color:#fff;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">AI TIPS</span>';
+    html += '<span style="font-size:14px;font-weight:600">Smart Travel Advice</span></div>';
+    html += '<div style="display:flex;flex-direction:column;gap:8px">';
+    for (var i = 0; i < tips.length; i++) {
+      html += '<div class="tip-card ' + tips[i].color + '"><span style="font-size:16px;flex-shrink:0">' + tips[i].icon + '</span><div>' + tips[i].text + '</div></div>';
+    }
+    html += '</div></div>';
+
+    area.innerHTML = html;
+
+    // Build track visual
+    var track = document.getElementById('track');
+    for (var si = 0; si < segments.length; si++) {
+      var seg = segments[si];
+      var ld = LINES[seg.line];
+      for (var i = 0; i < seg.stations.length; i++) {
+        var st = seg.stations[i];
+        var isEnd = (si === 0 && i === 0) || (si === segments.length - 1 && i === seg.stations.length - 1);
+        var isChange = (i === seg.stations.length - 1) && (si < segments.length - 1);
+        var d = document.createElement('div');
+        d.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:5px';
+        d.innerHTML = '<div style="width:' + (isEnd ? 20 : 14) + 'px;height:' + (isEnd ? 20 : 14) + 'px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2.5px ' + ld.color + ';background:' + (isEnd ? ld.color : '#fff') + '"></div>'
+          + '<div style="font-size:11px;max-width:72px;text-align:center;line-height:1.35;font-weight:' + ((i === 0 || i === seg.stations.length - 1) ? '600' : '400') + ';color:' + ((i === 0 || i === seg.stations.length - 1) ? '#0D0F1A' : '#767B99') + '">' + st
+          + (isChange ? '<div style="background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;border-radius:4px;font-size:9px;padding:1px 5px;margin-top:2px">Change here</div>' : '')
+          + '</div>';
         track.appendChild(d);
-        if(i<seg.stations.length-1){
-          const b=document.createElement('div');
-          b.style.cssText=`height:5px;width:44px;border-radius:3px;background:${ld.color};flex-shrink:0;margin-top:7px`;
+        if (i < seg.stations.length - 1) {
+          var b = document.createElement('div');
+          b.style.cssText = 'height:5px;width:44px;border-radius:3px;background:' + ld.color + ';flex-shrink:0;margin-top:7px';
           track.appendChild(b);
         }
-      });
-      if(si<segments.length-1){
-        const dash=document.createElement('div');
-        dash.style.cssText='width:44px;border-top:3px dashed #ccc;flex-shrink:0;margin-top:10px';
+      }
+      if (si < segments.length - 1) {
+        var dash = document.createElement('div');
+        dash.style.cssText = 'width:44px;border-top:3px dashed #ccc;flex-shrink:0;margin-top:10px';
         track.appendChild(dash);
       }
-    });
-    document.getElementById('segList').innerHTML=segments.map(seg=>{
-      const ld=LINES[seg.line];
-      return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
-        <div style="width:16px;height:16px;border-radius:50%;background:${ld.color};flex-shrink:0"></div>
-        <div style="flex:1">
-          <strong style="font-size:14px">${ld.name}</strong>
-          <div style="font-size:12.5px;color:var(--text-3)">Board at <em>${seg.stations[0]}</em> → Alight at <em>${seg.stations[seg.stations.length-1]}</em></div>
-        </div>
-        <div style="font-size:12px;font-weight:600;color:var(--brand);background:var(--surface-3);border-radius:6px;padding:3px 8px">${seg.stations.length-1} stops</div>
-      </div>`;
-    }).join('');
-  },500);
+    }
+
+    // Segment list
+    var segList = document.getElementById('segList');
+    for (var si = 0; si < segments.length; si++) {
+      var seg = segments[si];
+      var ld = LINES[seg.line];
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(26,35,126,0.12)';
+      row.innerHTML = '<div style="width:16px;height:16px;border-radius:50%;background:' + ld.color + ';flex-shrink:0"></div>'
+        + '<div style="flex:1"><strong style="font-size:14px">' + ld.name + '</strong>'
+        + '<div style="font-size:12.5px;color:#767B99">Board at ' + seg.stations[0] + ' → Alight at ' + seg.stations[seg.stations.length - 1] + '</div></div>'
+        + '<div style="font-size:12px;font-weight:600;color:#1A237E;background:#ECEEF6;border-radius:6px;padding:3px 8px">' + (seg.stations.length - 1) + ' stops</div>';
+      segList.appendChild(row);
+    }
+  }, 500);
 }
 </script>
 </body>
