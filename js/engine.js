@@ -124,7 +124,7 @@ function generateAITips(segments,path,fromStation,toStation){
     if(segments[i].line==="Magenta")isMagenta=true;
   }
   var totalMins=Math.round(totalStops*2.5+interchangeCount*5);
-  var fare=calculateFare(totalStops);
+  var fareObj=calculateFare(totalStops);
 
   if(interchangeCount===0){
     tips.push({icon:"✅",color:"success",text:"Direct journey on <strong>"+LINES[segments[0].line].name+"</strong> — no interchange needed!"});
@@ -138,7 +138,7 @@ function generateAITips(segments,path,fromStation,toStation){
   }
 
   tips.push({icon:"⏱",color:"warning",text:"Estimated travel time: <strong>~"+totalMins+" minutes</strong>. Add 5-10 min for waiting. Total budget: ~"+(totalMins+10)+" min."});
-  tips.push({icon:"💰",color:"success",text:"Approximate fare: <strong>₹"+fare+"</strong>. Smart Card gives 10% discount. Buy at any station counter."});
+  tips.push({icon:"💰",color:"success",text:"Token fare: <strong>₹"+fareObj.token+"</strong> &nbsp;|&nbsp; Smart Card: <strong>₹"any station counter."});
 
   var crowdLevel=CROWD_SCHEDULE[crowd.isWeekend?'weekend':'weekday'][crowd.hour];
   if(crowdLevel>=3){

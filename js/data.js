@@ -216,13 +216,18 @@ const CROWD_LABELS=["Empty","Light","Moderate","Heavy","Very Heavy"];
 const CROWD_COLORS=["#4CAF50","#8BC34A","#FF9800","#F44336","#B71C1C"];
 const CROWD_EMOJIS=["🟢","🟡","🟠","🔴","🔴"];
 
+// Average distance per stop = 1.2 km (Delhi Metro avg station spacing)
+// Real DMRC fare slabs based on km distance
 function calculateFare(stops){
-  if(stops<=2)return 10;
-  if(stops<=5)return 20;
-  if(stops<=12)return 30;
-  if(stops<=21)return 40;
-  if(stops<=32)return 50;
-  return 60;
+  var km = stops * 1.2; // approx km
+  var token, smart;
+  if(km <= 2)      { token = 10; smart = 9; }
+  else if(km <= 5) { token = 20; smart = 18; }
+  else if(km <= 12){ token = 30; smart = 27; }
+  else if(km <= 21){ token = 40; smart = 36; }
+  else if(km <= 32){ token = 50; smart = 45; }
+  else             { token = 60; smart = 54; }
+  return { token: token, smart: smart, km: Math.round(km) };
 }
 
 function resolveLandmark(input){

@@ -61,7 +61,7 @@ function findRoute(){
     const{path}=result;
     const segments=buildSegments(path);
     const stops=path.length-1,interchanges=segments.length-1;
-    const mins=Math.round(stops*2.5+interchanges*5),fare=calculateFare(stops);
+    const mins=Math.round(stops*2.5+interchanges*5),fareObj=calculateFare(stops);
     const crowd=getCrowdLevel();
     const crowdLevel=CROWD_SCHEDULE[crowd.isWeekend?'weekend':'weekday'][crowd.hour];
     let html=`<div class="card fade-in" style="margin-bottom:1rem">
@@ -73,7 +73,7 @@ function findRoute(){
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <span class="chip chip-info">🚉 ${stops} stops</span>
           <span class="chip chip-success">⏱ ~${mins} min</span>
-          <span class="chip chip-warning">💰 ₹${fare}</span>
+          <span class="chip chip-warning">💰 Token ₹${fareObj.token} | Card ₹${fareObj.smart}</span>
           <span class="chip" style="background:${CROWD_COLORS[crowdLevel]}20;color:${CROWD_COLORS[crowdLevel]}">${CROWD_EMOJIS[crowdLevel]} ${CROWD_LABELS[crowdLevel]}</span>
         </div>
       </div>
