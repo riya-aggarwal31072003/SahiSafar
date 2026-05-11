@@ -10,18 +10,6 @@
 
 
 
-!\[SahiSafar Banner](https://img.shields.io/badge/SahiSafar-Delhi%20Metro%20Navigator-1A237E?style=for-the-badge\&logo=data:image/png;base64,iVBORw0KGgo=)
-
-
-
-\[!\[Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-Visit%20SahiSafar-FF6D00?style=for-the-badge)](https://riya-aggarwal31072003.github.io/SahiSafar)
-
-\[!\[GitHub](https://img.shields.io/badge/GitHub-SahiSafar-181717?style=for-the-badge\&logo=github)](https://riya-aggarwal31072003.github.io/SahiSafar/)
-
-\[!\[LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge\&logo=linkedin)](https://www.linkedin.com/in/riya-aggarwal31072003)
-
-
-
 </div>
 
 
