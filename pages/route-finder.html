@@ -24,21 +24,25 @@
     </div>
     <div class="field" style="margin-bottom:12px">
       <label>Or Search by Landmark</label>
-      <input type="text" id="landmarkInput" placeholder="India Gate, AIIMS, Airport..."/>
+      <input type="text" id="landmarkInput" placeholder="India Gate, AIIMS, Airport, Meerut Central..."/>
       <div id="landmarkHint" style="font-size:12px;color:#1A237E;margin-top:4px;min-height:16px"></div>
     </div>
     <button class="btn btn-primary btn-full" id="findBtn">Find Route</button>
   </div>
+
   <div class="quick-grid" style="margin-bottom:1rem">
     <button class="quick-btn" id="q1"><span class="q-label">Quick</span>New Delhi to Rajiv Chowk</button>
-    <button class="quick-btn" id="q2"><span class="q-label">Yellow</span>Kashmere Gate to Huda City Centre</button>
+    <button class="quick-btn" id="q2"><span class="q-label">Yellow Line</span>Kashmere Gate to Huda City Centre</button>
     <button class="quick-btn" id="q3"><span class="q-label">Airport</span>New Delhi to IGI Airport</button>
     <button class="quick-btn" id="q4"><span class="q-label">RRTS</span>Anand Vihar ISBT to Meerut South</button>
+    <button class="quick-btn" id="q5"><span class="q-label">Meerut Metro</span>Meerut South to Meerut Central</button>
+    <button class="quick-btn" id="q6"><span class="q-label">Cross City</span>Rajiv Chowk to Meerut Central</button>
   </div>
+
   <div id="resultArea">
     <div class="empty-state">
       <div class="empty-icon">🚇</div>
-      <p>Select stations above and tap Find Route.</p>
+      <p>Select stations above and tap <strong>Find Route</strong>.</p>
     </div>
   </div>
 </div>
@@ -66,20 +70,20 @@ for (var i = 0; i < stationList.length; i++) {
   document.getElementById('toStation').appendChild(o2);
 }
 
-// Load from URL params
+// URL params
 var params = new URLSearchParams(window.location.search);
 if (params.get('from')) document.getElementById('fromStation').value = params.get('from');
 if (params.get('to')) document.getElementById('toStation').value = params.get('to');
 if (params.get('from') && params.get('to')) doFind();
 
-// Landmark search
+// Landmark
 document.getElementById('landmarkInput').addEventListener('input', function() {
   var v = this.value;
   var h = document.getElementById('landmarkHint');
   if (!v.trim()) { h.textContent = ''; return; }
   var m = resolveLandmark(v);
   if (m) { h.textContent = 'Nearest station: ' + m; document.getElementById('toStation').value = m; }
-  else h.textContent = 'Not found. Try: India Gate, AIIMS, Airport...';
+  else h.textContent = 'Not found. Try: India Gate, AIIMS, Meerut Central...';
 });
 
 // Quick buttons
@@ -87,6 +91,8 @@ document.getElementById('q1').onclick = function() { setQ('New Delhi','Rajiv Cho
 document.getElementById('q2').onclick = function() { setQ('Kashmere Gate','Huda City Centre'); };
 document.getElementById('q3').onclick = function() { setQ('New Delhi','IGI Airport Terminal 3'); };
 document.getElementById('q4').onclick = function() { setQ('Anand Vihar ISBT','Meerut South'); };
+document.getElementById('q5').onclick = function() { setQ('Meerut South','Meerut Central'); };
+document.getElementById('q6').onclick = function() { setQ('Rajiv Chowk','Meerut Central'); };
 
 function setQ(f, t) {
   document.getElementById('fromStation').value = f;
@@ -107,35 +113,37 @@ function doFind() {
   setTimeout(function() {
     var graph = buildGraph();
     var result = dijkstra(graph, from, to);
-    if (!result) { area.innerHTML = '<div class="error-card">No route found. These stations may not be connected yet.</div>'; return; }
+    if (!result) {
+      area.innerHTML = '<div class="error-card">No route found between these stations. They may not be connected in the current network.</div>';
+      return;
+    }
 
     var path = result.path;
     var segments = buildSegments(path);
-    if (!segments || segments.length === 0) { area.innerHTML = '<div class="error-card">Could not build route segments. Please try again.</div>'; return; }
+    if (!segments || segments.length === 0) {
+      area.innerHTML = '<div class="error-card">Route found but could not build journey. Please try again.</div>';
+      return;
+    }
 
     var stops = path.length - 1;
     var interchanges = segments.length - 1;
     var mins = Math.round(stops * 2.5 + interchanges * 5);
-    var fareObj = calculateFare(stops);
+    var mainLine = segments[0].line;
+    var fareObj = calculateFare(stops, mainLine);
     var crowd = getCrowdLevel();
     var crowdLevel = CROWD_SCHEDULE[crowd.isWeekend ? 'weekend' : 'weekday'][crowd.hour];
 
     var html = '<div class="card fade-in" style="margin-bottom:1rem">';
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:1rem">';
-    html += '<div><div style="font-size:17px;font-weight:700">' + from + ' to ' + to + '</div>';
+    html += '<div><div style="font-size:17px;font-weight:700">' + from + ' → ' + to + '</div>';
     html += '<div style="font-size:12px;color:#767B99;margin-top:2px">' + LINES[segments[0].line].name + (segments.length > 1 ? ' + ' + interchanges + ' interchange(s)' : '') + '</div></div>';
     html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
     html += '<span class="chip chip-info">🚉 ' + stops + ' stops</span>';
     html += '<span class="chip chip-success">⏱ ~' + mins + ' min</span>';
-    html += '<span class="chip chip-warning">🎫 Token ₹' + fareObj.token + '</span>';
-    html += '<span class="chip chip-success">💳 Card ₹' + fareObj.smart + '</span>';
+    html += '<span class="chip chip-warning">💰 ₹' + fareObj.fare + '</span>';
     html += '<span class="chip" style="background:' + CROWD_COLORS[crowdLevel] + '20;color:' + CROWD_COLORS[crowdLevel] + '">' + CROWD_EMOJIS[crowdLevel] + ' ' + CROWD_LABELS[crowdLevel] + '</span>';
     html += '</div></div>';
-
-    // Journey visual track
     html += '<div style="overflow-x:auto;padding:1rem 0"><div style="display:flex;align-items:flex-start;min-width:max-content" id="track"></div></div>';
-
-    // Segment list
     html += '<div id="segList" style="margin-top:1rem"></div>';
     html += '</div>';
 
@@ -153,29 +161,29 @@ function doFind() {
 
     area.innerHTML = html;
 
-    // Build track visual
+    // Build visual track
     var track = document.getElementById('track');
     for (var si = 0; si < segments.length; si++) {
       var seg = segments[si];
       var ld = LINES[seg.line];
       for (var i = 0; i < seg.stations.length; i++) {
         var st = seg.stations[i];
-        var isEnd = (si === 0 && i === 0) || (si === segments.length - 1 && i === seg.stations.length - 1);
-        var isChange = (i === seg.stations.length - 1) && (si < segments.length - 1);
+        var isEnd = (si === 0 && i === 0) || (si === segments.length-1 && i === seg.stations.length-1);
+        var isChange = (i === seg.stations.length-1) && (si < segments.length-1);
         var d = document.createElement('div');
         d.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:5px';
-        d.innerHTML = '<div style="width:' + (isEnd ? 20 : 14) + 'px;height:' + (isEnd ? 20 : 14) + 'px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2.5px ' + ld.color + ';background:' + (isEnd ? ld.color : '#fff') + '"></div>'
-          + '<div style="font-size:11px;max-width:72px;text-align:center;line-height:1.35;font-weight:' + ((i === 0 || i === seg.stations.length - 1) ? '600' : '400') + ';color:' + ((i === 0 || i === seg.stations.length - 1) ? '#0D0F1A' : '#767B99') + '">' + st
+        d.innerHTML = '<div style="width:' + (isEnd?20:14) + 'px;height:' + (isEnd?20:14) + 'px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2.5px ' + ld.color + ';background:' + (isEnd?ld.color:'#fff') + '"></div>'
+          + '<div style="font-size:11px;max-width:72px;text-align:center;line-height:1.35;font-weight:' + ((i===0||i===seg.stations.length-1)?'600':'400') + ';color:' + ((i===0||i===seg.stations.length-1)?'#0D0F1A':'#767B99') + '">' + st
           + (isChange ? '<div style="background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;border-radius:4px;font-size:9px;padding:1px 5px;margin-top:2px">Change here</div>' : '')
           + '</div>';
         track.appendChild(d);
-        if (i < seg.stations.length - 1) {
+        if (i < seg.stations.length-1) {
           var b = document.createElement('div');
           b.style.cssText = 'height:5px;width:44px;border-radius:3px;background:' + ld.color + ';flex-shrink:0;margin-top:7px';
           track.appendChild(b);
         }
       }
-      if (si < segments.length - 1) {
+      if (si < segments.length-1) {
         var dash = document.createElement('div');
         dash.style.cssText = 'width:44px;border-top:3px dashed #ccc;flex-shrink:0;margin-top:10px';
         track.appendChild(dash);
@@ -187,12 +195,14 @@ function doFind() {
     for (var si = 0; si < segments.length; si++) {
       var seg = segments[si];
       var ld = LINES[seg.line];
+      var segFare = calculateFare(seg.stations.length-1, seg.line);
       var row = document.createElement('div');
       row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(26,35,126,0.12)';
       row.innerHTML = '<div style="width:16px;height:16px;border-radius:50%;background:' + ld.color + ';flex-shrink:0"></div>'
         + '<div style="flex:1"><strong style="font-size:14px">' + ld.name + '</strong>'
-        + '<div style="font-size:12.5px;color:#767B99">Board at ' + seg.stations[0] + ' → Alight at ' + seg.stations[seg.stations.length - 1] + '</div></div>'
-        + '<div style="font-size:12px;font-weight:600;color:#1A237E;background:#ECEEF6;border-radius:6px;padding:3px 8px">' + (seg.stations.length - 1) + ' stops</div>';
+        + '<div style="font-size:12.5px;color:#767B99">Board at <em>' + seg.stations[0] + '</em> → Alight at <em>' + seg.stations[seg.stations.length-1] + '</em></div>'
+        + '<div style="font-size:11px;color:#1A237E;margin-top:2px">Fare: ~₹' + segFare.fare + ' (' + segFare.note + ')</div></div>'
+        + '<div style="font-size:12px;font-weight:600;color:#1A237E;background:#ECEEF6;border-radius:6px;padding:3px 8px">' + (seg.stations.length-1) + ' stops</div>';
       segList.appendChild(row);
     }
   }, 500);
