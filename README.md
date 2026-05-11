@@ -380,12 +380,6 @@ SahiSafar is built with ❤️ for every Delhi commuter — from the daily offic
 
 
 
-\[!\[LinkedIn](https://img.shields.io/badge/LinkedIn-Riya%20Aggarwal-0A66C2?style=for-the-badge\&logo=linkedin\&logoColor=white)](https://www.linkedin.com/in/riya-aggarwal-28429b260/)
-
-\[!\[GitHub](https://img.shields.io/badge/GitHub-riya--aggarwal31072003-181717?style=for-the-badge\&logo=github)](https://github.com/riya-aggarwal31072003)
-
-
-
 </div>
 
 
