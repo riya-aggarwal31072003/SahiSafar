@@ -119,9 +119,16 @@ function generateAITips(segments, path, fromStation, toStation) {
   }
   var totalMins = Math.round(totalStops * 2.5 + interchangeCount * 5);
 
-  // Get fare for main line
-  var mainLine = segments[0].line;
-  var fareObj = calculateFare(totalStops, mainLine);
+  // Total fare = sum of all segment fares
+var totalFare = 0;
+var fareBreakdown = [];
+for (var fi = 0; fi < segments.length; fi++) {
+  var segStops = segments[fi].stations.length - 1;
+  var segFareObj = calculateFare(segStops, segments[fi].line);
+  totalFare += segFareObj.fare;
+  fareBreakdown.push(LINES[segments[fi].line].shortName + ' ₹' + segFareObj.fare);
+}
+var fareObj = { fare: totalFare, note: fareBreakdown.join(' + ') };
 
   if (interchangeCount === 0) {
     tips.push({icon:'✅', color:'success', text:'Direct journey on <strong>' + LINES[segments[0].line].name + '</strong> — no interchange needed!'});

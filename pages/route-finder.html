@@ -128,8 +128,17 @@ function doFind() {
     var stops = path.length - 1;
     var interchanges = segments.length - 1;
     var mins = Math.round(stops * 2.5 + interchanges * 5);
-    var mainLine = segments[0].line;
-    var fareObj = calculateFare(stops, mainLine);
+    // Calculate TOTAL fare = sum of all segment fares
+var totalFare = 0;
+var fareBreakdown = [];
+for (var fi = 0; fi < segments.length; fi++) {
+  var seg = segments[fi];
+  var segStops = seg.stations.length - 1;
+  var segFareObj = calculateFare(segStops, seg.line);
+  totalFare += segFareObj.fare;
+  fareBreakdown.push(LINES[seg.line].shortName + ' ₹' + segFareObj.fare);
+}
+var fareObj = { fare: totalFare, note: fareBreakdown.join(' + ') };
     var crowd = getCrowdLevel();
     var crowdLevel = CROWD_SCHEDULE[crowd.isWeekend ? 'weekend' : 'weekday'][crowd.hour];
 
@@ -140,7 +149,7 @@ function doFind() {
     html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
     html += '<span class="chip chip-info">🚉 ' + stops + ' stops</span>';
     html += '<span class="chip chip-success">⏱ ~' + mins + ' min</span>';
-    html += '<span class="chip chip-warning">💰 ₹' + fareObj.fare + '</span>';
+    html += '<span class="chip chip-warning">💰 Total ₹' + fareObj.fare + '</span>';
     html += '<span class="chip" style="background:' + CROWD_COLORS[crowdLevel] + '20;color:' + CROWD_COLORS[crowdLevel] + '">' + CROWD_EMOJIS[crowdLevel] + ' ' + CROWD_LABELS[crowdLevel] + '</span>';
     html += '</div></div>';
     html += '<div style="overflow-x:auto;padding:1rem 0"><div style="display:flex;align-items:flex-start;min-width:max-content" id="track"></div></div>';
