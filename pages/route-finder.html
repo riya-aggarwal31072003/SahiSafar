@@ -109,7 +109,7 @@ function doFind() {
   if (!from || !to) { area.innerHTML = '<div class="error-card">Please select both stations.</div>'; return; }
   if (from === to) { area.innerHTML = '<div class="error-card">From and To cannot be the same.</div>'; return; }
   area.innerHTML = '<div class="loading"><span class="spinner"></span>Finding your SahiSafar...</div>';
-
+console.log('FROM:', from, 'TO:', to);
   setTimeout(function() {
     var graph = buildGraph();
     var result = dijkstra(graph, from, to);
@@ -120,6 +120,12 @@ function doFind() {
 
     var path = result.path;
     var segments = buildSegments(path);
+console.log('PATH LENGTH:', path.length);
+console.log('PATH:', path.join(' > '));
+console.log('SEGMENTS:', segments.length);
+for (var d = 0; d < segments.length; d++) {
+  console.log('SEG', d, ':', segments[d].line, '|', segments[d].stations.length, 'stations |', segments[d].stations[0], 'to', segments[d].stations[segments[d].stations.length-1]);
+}
     if (!segments || segments.length === 0) {
       area.innerHTML = '<div class="error-card">Route found but could not build journey. Please try again.</div>';
       return;
