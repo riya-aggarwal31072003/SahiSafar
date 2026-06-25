@@ -9,6 +9,7 @@
 .search-wrap{position:relative}
 .search-input{width:100%;padding:12px 40px 12px 14px;border:1.5px solid rgba(26,35,126,0.25);border-radius:12px;font-size:14px;font-family:inherit;color:#0D0F1A;background:#fff;outline:none;transition:border .15s}
 .search-input:focus{border-color:#3949AB;box-shadow:0 0 0 3px rgba(57,73,171,0.12)}
+.search-input::placeholder{color:#aaa}
 .search-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;color:#aaa}
 .drop-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid rgba(26,35,126,0.15);border-radius:12px;max-height:240px;overflow-y:auto;z-index:9999;box-shadow:0 8px 32px rgba(26,35,126,0.15);display:none}
 .drop-list.show{display:block}
@@ -33,35 +34,33 @@
 <div id="navPlaceholder"></div>
 <main>
 <div class="container">
+
+  <!-- SEARCH CARD -->
   <div class="card fade-in" style="margin-bottom:1rem">
     <div class="page-section-title">🗺 Route Finder</div>
 
-    <!-- FROM -->
     <div class="field" style="margin-bottom:12px">
       <label>From Station</label>
       <div class="search-wrap" id="fromWrap">
-        <input class="search-input" id="fromInput" type="text" placeholder="Type station name e.g. Rajiv Chowk..." autocomplete="off"/>
+        <input class="search-input" id="fromInput" type="text" placeholder="🔍 Type station name e.g. Rajiv Chowk..." autocomplete="off"/>
         <span class="search-icon">🔍</span>
         <div class="drop-list" id="fromDrop"></div>
       </div>
       <div id="fromSelected" style="display:none"></div>
     </div>
 
-    <!-- SWAP -->
     <button class="swap-btn" onclick="swapStations()">⇅ Swap From & To</button>
 
-    <!-- TO -->
     <div class="field" style="margin-bottom:12px">
       <label>To Station</label>
       <div class="search-wrap" id="toWrap">
-        <input class="search-input" id="toInput" type="text" placeholder="Type station name e.g. Meerut Central..." autocomplete="off"/>
+        <input class="search-input" id="toInput" type="text" placeholder="🔍 Type station name e.g. Meerut Central..." autocomplete="off"/>
         <span class="search-icon">🔍</span>
         <div class="drop-list" id="toDrop"></div>
       </div>
       <div id="toSelected" style="display:none"></div>
     </div>
 
-    <!-- LANDMARK -->
     <div class="field" style="margin-bottom:14px">
       <label>Or Search by Landmark</label>
       <div class="search-wrap">
@@ -74,8 +73,16 @@
     <button class="btn btn-primary btn-full" id="findBtn">🔍 Find My Route</button>
   </div>
 
-  <!-- QUICK ROUTES -->
-  <div class="page-section">
+  <!-- RESULT AREA -->
+  <div id="resultArea">
+    <div class="empty-state">
+      <div class="empty-icon">🚇</div>
+      <p>Search your stations above and tap <strong>Find Route</strong>.</p>
+    </div>
+  </div>
+
+  <!-- POPULAR ROUTES — always below result -->
+  <div id="popularSection" class="page-section" style="margin-top:1.5rem">
     <div class="page-section-title">Popular Routes</div>
     <div class="quick-grid">
       <button class="quick-btn" onclick="setQ('New Delhi','Rajiv Chowk')"><span class="q-label">Quick</span>New Delhi → Rajiv Chowk</button>
@@ -84,15 +91,11 @@
       <button class="quick-btn" onclick="setQ('Anand Vihar ISBT','Meerut South')"><span class="q-label">RRTS</span>Anand Vihar → Meerut South</button>
       <button class="quick-btn" onclick="setQ('Meerut South','Meerut Central')"><span class="q-label">Meerut Metro</span>Meerut South → Meerut Central</button>
       <button class="quick-btn" onclick="setQ('Rajiv Chowk','Meerut Central')"><span class="q-label">Cross City</span>Rajiv Chowk → Meerut Central</button>
+      <button class="quick-btn" onclick="setQ('Dwarka Sec-21','Botanical Garden')"><span class="q-label">Blue Line</span>Dwarka → Botanical Garden</button>
+      <button class="quick-btn" onclick="setQ('Janakpuri West','Noida City Centre')"><span class="q-label">Cross Delhi</span>Janakpuri West → Noida</button>
     </div>
   </div>
 
-  <div id="resultArea">
-    <div class="empty-state">
-      <div class="empty-icon">🚇</div>
-      <p>Search your stations above and tap <strong>Find Route</strong>.</p>
-    </div>
-  </div>
 </div>
 </main>
 <div id="footerPlaceholder"></div>
@@ -112,9 +115,9 @@ for (var lk in LINES) {
   for (var i = 0; i < sts.length; i++) {
     if (!seen.has(sts[i])) {
       seen.add(sts[i]);
-      allStations.push({ name: sts[i], line: lk, color: LINES[lk].color, short: LINES[lk].shortName });
+      allStations.push({ name:sts[i], line:lk, color:LINES[lk].color, short:LINES[lk].shortName });
     }
-    if (!stationLineMap[sts[i]]) stationLineMap[sts[i]] = { color: LINES[lk].color, short: LINES[lk].shortName };
+    if (!stationLineMap[sts[i]]) stationLineMap[sts[i]] = { color:LINES[lk].color, short:LINES[lk].shortName };
   }
 }
 allStations.sort(function(a,b){ return a.name.localeCompare(b.name); });
@@ -122,7 +125,7 @@ allStations.sort(function(a,b){ return a.name.localeCompare(b.name); });
 var selectedFrom = '';
 var selectedTo = '';
 
-// ── SEARCH COMPONENT ─────────────────────────────────────
+// ── SEARCH COMPONENT ─────────────────────────
 function initSearch(inputId, dropId, selectedId, onPick) {
   var inp = document.getElementById(inputId);
   var drop = document.getElementById(dropId);
@@ -133,26 +136,21 @@ function initSearch(inputId, dropId, selectedId, onPick) {
     var results = q === ''
       ? allStations.slice(0, 80)
       : allStations.filter(function(s){ return s.name.toLowerCase().indexOf(q) !== -1; });
-
     if (results.length === 0) {
       drop.innerHTML = '<div class="no-res">No station found — try a different name</div>';
     } else {
-      drop.innerHTML = results.slice(0, 60).map(function(s){
-        return '<div class="drop-item" data-name="' + s.name + '" data-color="' + s.color + '" data-short="' + s.short + '">'
-          + '<div class="dot" style="background:' + s.color + '"></div>'
-          + '<div class="sname">' + s.name + '</div>'
-          + '<div class="lname">' + s.short + ' Line</div>'
-          + '</div>';
+      drop.innerHTML = results.slice(0,60).map(function(s){
+        return '<div class="drop-item" data-name="'+s.name+'" data-color="'+s.color+'" data-short="'+s.short+'">'
+          +'<div class="dot" style="background:'+s.color+'"></div>'
+          +'<div class="sname">'+s.name+'</div>'
+          +'<div class="lname">'+s.short+' Line</div>'
+          +'</div>';
       }).join('');
-      // attach clicks
       var items = drop.querySelectorAll('.drop-item');
       for (var i = 0; i < items.length; i++) {
         items[i].addEventListener('mousedown', function(e){
           e.preventDefault();
-          var name = this.getAttribute('data-name');
-          var color = this.getAttribute('data-color');
-          var short = this.getAttribute('data-short');
-          pickStation(name, color, short);
+          pickStation(this.getAttribute('data-name'), this.getAttribute('data-color'), this.getAttribute('data-short'));
         });
       }
     }
@@ -162,54 +160,39 @@ function initSearch(inputId, dropId, selectedId, onPick) {
   function pickStation(name, color, short) {
     onPick(name);
     inp.value = '';
-    inp.placeholder = '';
     drop.classList.remove('show');
     sel.style.display = 'flex';
     sel.innerHTML = '<div class="selected-station">'
-      + '<div class="dot" style="background:' + color + '"></div>'
-      + '<div class="sname">' + name + '</div>'
-      + '<div class="lbadge">' + short + '</div>'
-      + '<div class="clr" onclick="clearStation(\'' + selectedId + '\',\'' + inputId + '\')">✕</div>'
-      + '</div>';
+      +'<div class="dot" style="background:'+color+'"></div>'
+      +'<div class="sname">'+name+'</div>'
+      +'<div class="lbadge">'+short+'</div>'
+      +'<div class="clr" onclick="clearSt(\''+selectedId+'\',\''+inputId+'\')">✕</div>'
+      +'</div>';
   }
 
-  inp.addEventListener('focus', function(){
-    renderList(this.value);
-  });
-
-  inp.addEventListener('input', function(){
-    renderList(this.value);
-  });
-
-  inp.addEventListener('blur', function(){
-    setTimeout(function(){ drop.classList.remove('show'); }, 150);
-  });
-
-  // expose pickStation for external use
-  inp._pick = pickStation;
+  inp.addEventListener('focus', function(){ renderList(this.value); });
+  inp.addEventListener('input', function(){ renderList(this.value); });
+  inp.addEventListener('blur', function(){ setTimeout(function(){ drop.classList.remove('show'); }, 150); });
 }
 
-function clearStation(selId, inpId) {
-  if (selId === 'fromSelected') {
-    selectedFrom = '';
-    document.getElementById('fromInput').placeholder = 'Type station name e.g. Rajiv Chowk...';
-  } else {
-    selectedTo = '';
-    document.getElementById('toInput').placeholder = 'Type station name e.g. Meerut Central...';
-  }
+function clearSt(selId, inpId) {
+  if (selId === 'fromSelected') selectedFrom = '';
+  else selectedTo = '';
   document.getElementById(selId).style.display = 'none';
   document.getElementById(selId).innerHTML = '';
   document.getElementById(inpId).value = '';
 }
 
-initSearch('fromInput', 'fromDrop', 'fromSelected', function(name){
-  selectedFrom = name;
-});
-initSearch('toInput', 'toDrop', 'toSelected', function(name){
-  selectedTo = name;
+initSearch('fromInput','fromDrop','fromSelected', function(n){ selectedFrom = n; });
+initSearch('toInput','toDrop','toSelected', function(n){ selectedTo = n; });
+
+// Close dropdowns on outside click
+document.addEventListener('click', function(e){
+  if (!document.getElementById('fromWrap').contains(e.target)) document.getElementById('fromDrop').classList.remove('show');
+  if (!document.getElementById('toWrap').contains(e.target)) document.getElementById('toDrop').classList.remove('show');
 });
 
-// ── LANDMARK SEARCH ───────────────────────────────────────
+// ── LANDMARK ─────────────────────────────────
 document.getElementById('landmarkInput').addEventListener('input', function(){
   var v = this.value;
   var h = document.getElementById('landmarkHint');
@@ -217,90 +200,100 @@ document.getElementById('landmarkInput').addEventListener('input', function(){
   var m = resolveLandmark(v);
   if (m) {
     h.textContent = '📍 Nearest station: ' + m;
-    var info = stationLineMap[m] || { color:'#1A237E', short:'Metro' };
+    var info = stationLineMap[m] || {color:'#1A237E',short:'Metro'};
     selectedTo = m;
     var sel = document.getElementById('toSelected');
     sel.style.display = 'flex';
-    sel.innerHTML = '<div class="selected-station">'
-      + '<div class="dot" style="background:' + info.color + '"></div>'
-      + '<div class="sname">' + m + '</div>'
-      + '<div class="lbadge">' + info.short + '</div>'
-      + '<div class="clr" onclick="clearStation(\'toSelected\',\'toInput\')">✕</div>'
-      + '</div>';
-    document.getElementById('toInput').value = '';
+    sel.innerHTML = '<div class="selected-station"><div class="dot" style="background:'+info.color+'"></div><div class="sname">'+m+'</div><div class="lbadge">'+info.short+'</div><div class="clr" onclick="clearSt(\'toSelected\',\'toInput\')">✕</div></div>';
   } else {
     h.textContent = 'Not found. Try: India Gate, AIIMS, Airport...';
   }
 });
 
-// ── SWAP ──────────────────────────────────────────────────
+// ── SWAP ──────────────────────────────────────
 function swapStations() {
   var tf = selectedFrom, tt = selectedTo;
   if (!tf && !tt) return;
-  clearStation('fromSelected','fromInput');
-  clearStation('toSelected','toInput');
+  clearSt('fromSelected','fromInput');
+  clearSt('toSelected','toInput');
   if (tt) {
-    var info = stationLineMap[tt] || { color:'#1A237E', short:'Metro' };
+    var info = stationLineMap[tt]||{color:'#1A237E',short:'Metro'};
     selectedFrom = tt;
-    var sel = document.getElementById('fromSelected');
-    sel.style.display = 'flex';
-    sel.innerHTML = '<div class="selected-station"><div class="dot" style="background:' + info.color + '"></div><div class="sname">' + tt + '</div><div class="lbadge">' + info.short + '</div><div class="clr" onclick="clearStation(\'fromSelected\',\'fromInput\')">✕</div></div>';
+    var s = document.getElementById('fromSelected');
+    s.style.display='flex';
+    s.innerHTML='<div class="selected-station"><div class="dot" style="background:'+info.color+'"></div><div class="sname">'+tt+'</div><div class="lbadge">'+info.short+'</div><div class="clr" onclick="clearSt(\'fromSelected\',\'fromInput\')">✕</div></div>';
   }
   if (tf) {
-    var info = stationLineMap[tf] || { color:'#1A237E', short:'Metro' };
+    var info = stationLineMap[tf]||{color:'#1A237E',short:'Metro'};
     selectedTo = tf;
-    var sel = document.getElementById('toSelected');
-    sel.style.display = 'flex';
-    sel.innerHTML = '<div class="selected-station"><div class="dot" style="background:' + info.color + '"></div><div class="sname">' + tf + '</div><div class="lbadge">' + info.short + '</div><div class="clr" onclick="clearStation(\'toSelected\',\'toInput\')">✕</div></div>';
+    var s = document.getElementById('toSelected');
+    s.style.display='flex';
+    s.innerHTML='<div class="selected-station"><div class="dot" style="background:'+info.color+'"></div><div class="sname">'+tf+'</div><div class="lbadge">'+info.short+'</div><div class="clr" onclick="clearSt(\'toSelected\',\'toInput\')">✕</div></div>';
   }
 }
 
-// ── QUICK ROUTES ──────────────────────────────────────────
+// ── QUICK ROUTES ──────────────────────────────
 function setQ(f, t) {
-  clearStation('fromSelected','fromInput');
-  clearStation('toSelected','toInput');
-  var cf = stationLineMap[f] || {color:'#1A237E',short:'Metro'};
-  var ct = stationLineMap[t] || {color:'#1A237E',short:'Metro'};
+  clearSt('fromSelected','fromInput');
+  clearSt('toSelected','toInput');
+  var cf = stationLineMap[f]||{color:'#1A237E',short:'Metro'};
+  var ct = stationLineMap[t]||{color:'#1A237E',short:'Metro'};
   selectedFrom = f;
   selectedTo = t;
   var fs = document.getElementById('fromSelected');
-  fs.style.display = 'flex';
-  fs.innerHTML = '<div class="selected-station"><div class="dot" style="background:' + cf.color + '"></div><div class="sname">' + f + '</div><div class="lbadge">' + cf.short + '</div><div class="clr" onclick="clearStation(\'fromSelected\',\'fromInput\')">✕</div></div>';
+  fs.style.display='flex';
+  fs.innerHTML='<div class="selected-station"><div class="dot" style="background:'+cf.color+'"></div><div class="sname">'+f+'</div><div class="lbadge">'+cf.short+'</div><div class="clr" onclick="clearSt(\'fromSelected\',\'fromInput\')">✕</div></div>';
   var ts = document.getElementById('toSelected');
-  ts.style.display = 'flex';
-  ts.innerHTML = '<div class="selected-station"><div class="dot" style="background:' + ct.color + '"></div><div class="sname">' + t + '</div><div class="lbadge">' + ct.short + '</div><div class="clr" onclick="clearStation(\'toSelected\',\'toInput\')">✕</div></div>';
+  ts.style.display='flex';
+  ts.innerHTML='<div class="selected-station"><div class="dot" style="background:'+ct.color+'"></div><div class="sname">'+t+'</div><div class="lbadge">'+ct.short+'</div><div class="clr" onclick="clearSt(\'toSelected\',\'toInput\')">✕</div></div>';
   doFind();
 }
 
-// URL params
+// ── URL PARAMS ────────────────────────────────
 var params = new URLSearchParams(window.location.search);
 if (params.get('from') && params.get('to')) setQ(params.get('from'), params.get('to'));
 
-// ── FIND ROUTE ────────────────────────────────────────────
+// ── FIND ROUTE ────────────────────────────────
 document.getElementById('findBtn').onclick = function(){ doFind(); };
 
 function doFind() {
   var from = selectedFrom;
   var to = selectedTo;
   var area = document.getElementById('resultArea');
+  var popular = document.getElementById('popularSection');
+
   if (!from || !to) { area.innerHTML = '<div class="error-card">Please select both From and To stations.</div>'; return; }
   if (from === to) { area.innerHTML = '<div class="error-card">From and To cannot be the same station.</div>'; return; }
+
   area.innerHTML = '<div class="loading"><span class="spinner"></span>Finding your SahiSafar...</div>';
+
+  // Hide popular while loading
+  popular.style.display = 'none';
 
   setTimeout(function(){
     var graph = buildGraph();
     var result = dijkstra(graph, from, to);
-    if (!result) { area.innerHTML = '<div class="error-card">No route found. These stations may not be connected in the current network.</div>'; return; }
+
+    if (!result) {
+      area.innerHTML = '<div class="error-card">No route found. These stations may not be connected in current network.</div>';
+      popular.style.display = 'block';
+      return;
+    }
 
     var path = result.path;
     var segments = buildSegments(path);
-    if (!segments || segments.length === 0) { area.innerHTML = '<div class="error-card">Could not build route segments. Please try again.</div>'; return; }
+
+    if (!segments || segments.length === 0) {
+      area.innerHTML = '<div class="error-card">Could not build route segments. Please try again.</div>';
+      popular.style.display = 'block';
+      return;
+    }
 
     var stops = path.length - 1;
     var interchanges = segments.length - 1;
     var mins = Math.round(stops * 2.5 + interchanges * 5);
 
-    // TOTAL FARE
+    // TOTAL FARE = all segments added
     var totalFare = 0;
     var fareBreakdown = [];
     for (var fi = 0; fi < segments.length; fi++) {
@@ -314,36 +307,43 @@ function doFind() {
 
     var html = '<div class="card fade-in" style="margin-bottom:1rem">';
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:1rem">';
-    html += '<div><div style="font-size:17px;font-weight:700">' + from + ' → ' + to + '</div>';
-    html += '<div style="font-size:12px;color:#767B99;margin-top:2px">' + LINES[segments[0].line].name + (interchanges > 0 ? ' + ' + interchanges + ' interchange(s)' : '') + '</div></div>';
+    html += '<div><div style="font-size:17px;font-weight:700">'+from+' → '+to+'</div>';
+    html += '<div style="font-size:12px;color:#767B99;margin-top:2px">'+LINES[segments[0].line].name+(interchanges>0?' + '+interchanges+' interchange(s)':'')+'</div></div>';
     html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
-    html += '<span class="chip chip-info">🚉 ' + stops + ' stops</span>';
-    html += '<span class="chip chip-success">⏱ ~' + mins + ' min</span>';
-    html += '<span class="chip chip-warning">💰 ₹' + totalFare + '</span>';
-    html += '<span class="chip" style="background:' + CROWD_COLORS[crowdLevel] + '20;color:' + CROWD_COLORS[crowdLevel] + '">' + CROWD_EMOJIS[crowdLevel] + ' ' + CROWD_LABELS[crowdLevel] + '</span>';
+    html += '<span class="chip chip-info">🚉 '+stops+' stops</span>';
+    html += '<span class="chip chip-success">⏱ ~'+mins+' min</span>';
+    html += '<span class="chip chip-warning">💰 ₹'+totalFare+'</span>';
+    html += '<span class="chip" style="background:'+CROWD_COLORS[crowdLevel]+'20;color:'+CROWD_COLORS[crowdLevel]+'">'+CROWD_EMOJIS[crowdLevel]+' '+CROWD_LABELS[crowdLevel]+'</span>';
     html += '</div></div>';
 
+    // Fare breakdown if multi-line
     if (fareBreakdown.length > 1) {
       html += '<div style="background:#E8F5E9;border-radius:8px;padding:8px 12px;font-size:12.5px;color:#1B5E20;margin-bottom:12px">';
-      html += '💰 Fare breakdown: ' + fareBreakdown.join(' + ') + ' = <strong>Total ₹' + totalFare + '</strong></div>';
+      html += '💰 Fare breakdown: '+fareBreakdown.join(' + ')+' = <strong>Total ₹'+totalFare+'</strong></div>';
     }
 
     html += '<div style="overflow-x:auto;padding:1rem 0"><div style="display:flex;align-items:flex-start;min-width:max-content" id="track"></div></div>';
-    html += '<div id="segList" style="margin-top:1rem"></div></div>';
+    html += '<div id="segList" style="margin-top:1rem"></div>';
+    html += '</div>';
 
+    // AI Tips
     var tips = generateAITips(segments, path, from, to);
-    html += '<div class="card fade-in"><div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">';
+    html += '<div class="card fade-in">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">';
     html += '<span style="background:#1A237E;color:#fff;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">AI TIPS</span>';
     html += '<span style="font-size:14px;font-weight:600">Smart Travel Advice</span></div>';
     html += '<div style="display:flex;flex-direction:column;gap:8px">';
     for (var i = 0; i < tips.length; i++) {
-      html += '<div class="tip-card ' + tips[i].color + '"><span style="font-size:16px;flex-shrink:0">' + tips[i].icon + '</span><div>' + tips[i].text + '</div></div>';
+      html += '<div class="tip-card '+tips[i].color+'"><span style="font-size:16px;flex-shrink:0">'+tips[i].icon+'</span><div>'+tips[i].text+'</div></div>';
     }
     html += '</div></div>';
 
     area.innerHTML = html;
 
-    // Track visual
+    // Show popular BELOW result
+    popular.style.display = 'block';
+
+    // Build visual track
     var track = document.getElementById('track');
     for (var si = 0; si < segments.length; si++) {
       var seg = segments[si];
@@ -386,6 +386,10 @@ function doFind() {
         +'<div style="font-size:12px;font-weight:600;color:#1A237E;background:#ECEEF6;border-radius:6px;padding:3px 8px">'+(seg.stations.length-1)+' stops</div>';
       segList.appendChild(row);
     }
+
+    // Scroll to result smoothly
+    area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   }, 400);
 }
 </script>
