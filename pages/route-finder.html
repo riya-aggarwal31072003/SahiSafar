@@ -343,17 +343,19 @@ function doFind() {
     // Show popular BELOW result
     popular.style.display = 'block';
 
-    // Build visual track
+   // Build visual track
     var track = document.getElementById('track');
     for (var si = 0; si < segments.length; si++) {
       var seg = segments[si];
       var ld = LINES[seg.line];
       for (var i = 0; i < seg.stations.length; i++) {
-        var isEnd = (si===0&&i===0)||(si===segments.length-1&&i===seg.stations.length-1);
-        var isChange = (i===seg.stations.length-1)&&(si<segments.length-1);
+        var isStart = (si===0 && i===0);
+        var isEnd = (si===segments.length-1 && i===seg.stations.length-1);
+        var isChange = (i===seg.stations.length-1) && (si<segments.length-1);
+
         var d = document.createElement('div');
         d.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:5px';
-        d.innerHTML = '<div style="width:'+(isEnd?20:14)+'px;height:'+(isEnd?20:14)+'px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2.5px '+ld.color+';background:'+(isEnd?ld.color:'#fff')+'"></div>'
+        d.innerHTML = '<div style="width:'+(isStart||isEnd?20:14)+'px;height:'+(isStart||isEnd?20:14)+'px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2.5px '+ld.color+';background:'+(isStart||isEnd?ld.color:'#fff')+'"></div>'
           +'<div style="font-size:11px;max-width:72px;text-align:center;line-height:1.35;font-weight:'+((i===0||i===seg.stations.length-1)?'600':'400')+';color:'+((i===0||i===seg.stations.length-1)?'#0D0F1A':'#767B99')+'">'+seg.stations[i]
           +(isChange?'<div style="background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;border-radius:4px;font-size:9px;padding:1px 5px;margin-top:2px">Change here</div>':'')
           +'</div>';
@@ -370,6 +372,12 @@ function doFind() {
         track.appendChild(dash);
       }
     }
+      if (si < segments.length-1) {
+        var dash = document.createElement('div');
+        dash.style.cssText = 'width:44px;border-top:3px dashed #ccc;flex-shrink:0;margin-top:10px';
+        track.appendChild(dash);
+      }
+    }
 
     // Segment list
     var segList = document.getElementById('segList');
@@ -379,14 +387,23 @@ function doFind() {
       var sf = calculateFare(seg.stations.length-1, seg.line);
       var row = document.createElement('div');
       row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(26,35,126,0.12)';
-      row.innerHTML = '<div style="width:16px;height:16px;border-radius:50%;background:'+ld.color+';flex-shrink:0"></div>'
-        +'<div style="flex:1"><strong style="font-size:14px">'+ld.name+'</strong>'
-        +'<div style="font-size:12.5px;color:#767B99">Board at <em>'+seg.stations[0]+'</em> → Alight at <em>'+seg.stations[seg.stations.length-1]+'</em></div>'
-        +'<div style="font-size:11px;color:#1A237E;margin-top:2px">Fare: ₹'+sf.fare+' ('+sf.note+')</div></div>'
-        +'<div style="font-size:12px;font-weight:600;color:#1A237E;background:#ECEEF6;border-radius:6px;padding:3px 8px">'+(seg.stations.length-1)+' stops</div>';
+      row.innerHTML =
+        '<div style="width:16px;height:16px;border-radius:50%;background:'+ld.color+';flex-shrink:0"></div>'
+        +'<div style="flex:1">'
+        +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">'
+        +'<strong style="font-size:13px">'+ld.name+'</strong>'
+        +'<span style="background:'+ld.color+';color:'+ld.textColor+';font-size:10px;padding:2px 7px;border-radius:99px;font-weight:600">'+ld.shortName+'</span>'
+        +'</div>'
+        +'<div style="font-size:12px;color:#767B99">🚉 Board: <strong>'+seg.stations[0]+'</strong></div>'
+        +'<div style="font-size:12px;color:#767B99">🏁 Alight: <strong>'+seg.stations[seg.stations.length-1]+'</strong></div>'
+        +(si < segments.length-1 ? '<div style="font-size:11px;color:#E65100;margin-top:3px">🔄 Change train here</div>' : '')
+        +'</div>'
+        +'<div style="text-align:right;flex-shrink:0">'
+        +'<div style="font-size:13px;font-weight:700;color:#1A237E">'+( seg.stations.length-1)+' stops</div>'
+        +'<div style="font-size:11px;color:#767B99">₹'+sf.fare+'</div>'
+        +'</div>';
       segList.appendChild(row);
     }
-
     // Scroll to result smoothly
     area.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
