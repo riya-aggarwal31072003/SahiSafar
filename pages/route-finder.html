@@ -28,6 +28,16 @@
 .selected-station .clr:hover{color:#C62828}
 .swap-btn{width:100%;padding:8px;background:none;border:1.5px dashed rgba(26,35,126,0.2);border-radius:10px;font-family:inherit;font-size:13px;color:#3949AB;cursor:pointer;transition:all .15s;margin:8px 0}
 .swap-btn:hover{background:#ECEEF6}
+.seg-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(26,35,126,0.08)}
+.seg-row:last-child{border-bottom:none}
+.seg-info{flex:1}
+.seg-title{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.seg-badge{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:600}
+.seg-detail{font-size:12px;color:#767B99;margin-bottom:2px}
+.seg-change{font-size:11px;color:#E65100;margin-top:4px;font-weight:600}
+.seg-stats{text-align:right;flex-shrink:0}
+.seg-stops{font-size:14px;font-weight:700;color:#1A237E}
+.seg-fare{font-size:11px;color:#767B99;margin-top:2px}
 </style>
 </head>
 <body>
@@ -35,7 +45,6 @@
 <main>
 <div class="container">
 
-  <!-- SEARCH CARD -->
   <div class="card fade-in" style="margin-bottom:1rem">
     <div class="page-section-title">🗺 Route Finder</div>
 
@@ -73,7 +82,6 @@
     <button class="btn btn-primary btn-full" id="findBtn">🔍 Find My Route</button>
   </div>
 
-  <!-- RESULT AREA -->
   <div id="resultArea">
     <div class="empty-state">
       <div class="empty-icon">🚇</div>
@@ -81,7 +89,6 @@
     </div>
   </div>
 
-  <!-- POPULAR ROUTES — always below result -->
   <div id="popularSection" class="page-section" style="margin-top:1.5rem">
     <div class="page-section-title">Popular Routes</div>
     <div class="quick-grid">
@@ -92,7 +99,7 @@
       <button class="quick-btn" onclick="setQ('Meerut South','Meerut Central')"><span class="q-label">Meerut Metro</span>Meerut South → Meerut Central</button>
       <button class="quick-btn" onclick="setQ('Rajiv Chowk','Meerut Central')"><span class="q-label">Cross City</span>Rajiv Chowk → Meerut Central</button>
       <button class="quick-btn" onclick="setQ('Dwarka Sec-21','Botanical Garden')"><span class="q-label">Blue Line</span>Dwarka → Botanical Garden</button>
-      <button class="quick-btn" onclick="setQ('Janakpuri West','Noida City Centre')"><span class="q-label">Cross Delhi</span>Janakpuri West → Noida</button>
+      <button class="quick-btn" onclick="setQ('Janakpuri West','Noida City Centre')"><span class="q-label">Cross Delhi</span>Janakpuri → Noida</button>
     </div>
   </div>
 
@@ -115,9 +122,9 @@ for (var lk in LINES) {
   for (var i = 0; i < sts.length; i++) {
     if (!seen.has(sts[i])) {
       seen.add(sts[i]);
-      allStations.push({ name:sts[i], line:lk, color:LINES[lk].color, short:LINES[lk].shortName });
+      allStations.push({name:sts[i],line:lk,color:LINES[lk].color,short:LINES[lk].shortName});
     }
-    if (!stationLineMap[sts[i]]) stationLineMap[sts[i]] = { color:LINES[lk].color, short:LINES[lk].shortName };
+    if (!stationLineMap[sts[i]]) stationLineMap[sts[i]] = {color:LINES[lk].color,short:LINES[lk].shortName};
   }
 }
 allStations.sort(function(a,b){ return a.name.localeCompare(b.name); });
@@ -125,7 +132,7 @@ allStations.sort(function(a,b){ return a.name.localeCompare(b.name); });
 var selectedFrom = '';
 var selectedTo = '';
 
-// ── SEARCH COMPONENT ─────────────────────────
+// ── SEARCH COMPONENT ──────────────────────────────────────
 function initSearch(inputId, dropId, selectedId, onPick) {
   var inp = document.getElementById(inputId);
   var drop = document.getElementById(dropId);
@@ -134,10 +141,10 @@ function initSearch(inputId, dropId, selectedId, onPick) {
   function renderList(query) {
     var q = query.toLowerCase().trim();
     var results = q === ''
-      ? allStations.slice(0, 80)
+      ? allStations.slice(0,80)
       : allStations.filter(function(s){ return s.name.toLowerCase().indexOf(q) !== -1; });
     if (results.length === 0) {
-      drop.innerHTML = '<div class="no-res">No station found — try a different name</div>';
+      drop.innerHTML = '<div class="no-res">No station found — try different name</div>';
     } else {
       drop.innerHTML = results.slice(0,60).map(function(s){
         return '<div class="drop-item" data-name="'+s.name+'" data-color="'+s.color+'" data-short="'+s.short+'">'
@@ -150,7 +157,7 @@ function initSearch(inputId, dropId, selectedId, onPick) {
       for (var i = 0; i < items.length; i++) {
         items[i].addEventListener('mousedown', function(e){
           e.preventDefault();
-          pickStation(this.getAttribute('data-name'), this.getAttribute('data-color'), this.getAttribute('data-short'));
+          pickStation(this.getAttribute('data-name'),this.getAttribute('data-color'),this.getAttribute('data-short'));
         });
       }
     }
@@ -186,13 +193,12 @@ function clearSt(selId, inpId) {
 initSearch('fromInput','fromDrop','fromSelected', function(n){ selectedFrom = n; });
 initSearch('toInput','toDrop','toSelected', function(n){ selectedTo = n; });
 
-// Close dropdowns on outside click
 document.addEventListener('click', function(e){
   if (!document.getElementById('fromWrap').contains(e.target)) document.getElementById('fromDrop').classList.remove('show');
   if (!document.getElementById('toWrap').contains(e.target)) document.getElementById('toDrop').classList.remove('show');
 });
 
-// ── LANDMARK ─────────────────────────────────
+// ── LANDMARK ──────────────────────────────────────────────
 document.getElementById('landmarkInput').addEventListener('input', function(){
   var v = this.value;
   var h = document.getElementById('landmarkHint');
@@ -200,7 +206,7 @@ document.getElementById('landmarkInput').addEventListener('input', function(){
   var m = resolveLandmark(v);
   if (m) {
     h.textContent = '📍 Nearest station: ' + m;
-    var info = stationLineMap[m] || {color:'#1A237E',short:'Metro'};
+    var info = stationLineMap[m]||{color:'#1A237E',short:'Metro'};
     selectedTo = m;
     var sel = document.getElementById('toSelected');
     sel.style.display = 'flex';
@@ -210,7 +216,7 @@ document.getElementById('landmarkInput').addEventListener('input', function(){
   }
 });
 
-// ── SWAP ──────────────────────────────────────
+// ── SWAP ──────────────────────────────────────────────────
 function swapStations() {
   var tf = selectedFrom, tt = selectedTo;
   if (!tf && !tt) return;
@@ -232,14 +238,13 @@ function swapStations() {
   }
 }
 
-// ── QUICK ROUTES ──────────────────────────────
+// ── QUICK ROUTES ──────────────────────────────────────────
 function setQ(f, t) {
   clearSt('fromSelected','fromInput');
   clearSt('toSelected','toInput');
   var cf = stationLineMap[f]||{color:'#1A237E',short:'Metro'};
   var ct = stationLineMap[t]||{color:'#1A237E',short:'Metro'};
-  selectedFrom = f;
-  selectedTo = t;
+  selectedFrom = f; selectedTo = t;
   var fs = document.getElementById('fromSelected');
   fs.style.display='flex';
   fs.innerHTML='<div class="selected-station"><div class="dot" style="background:'+cf.color+'"></div><div class="sname">'+f+'</div><div class="lbadge">'+cf.short+'</div><div class="clr" onclick="clearSt(\'fromSelected\',\'fromInput\')">✕</div></div>';
@@ -249,11 +254,11 @@ function setQ(f, t) {
   doFind();
 }
 
-// ── URL PARAMS ────────────────────────────────
+// URL params
 var params = new URLSearchParams(window.location.search);
 if (params.get('from') && params.get('to')) setQ(params.get('from'), params.get('to'));
 
-// ── FIND ROUTE ────────────────────────────────
+// ── FIND ROUTE ────────────────────────────────────────────
 document.getElementById('findBtn').onclick = function(){ doFind(); };
 
 function doFind() {
@@ -262,12 +267,16 @@ function doFind() {
   var area = document.getElementById('resultArea');
   var popular = document.getElementById('popularSection');
 
-  if (!from || !to) { area.innerHTML = '<div class="error-card">Please select both From and To stations.</div>'; return; }
-  if (from === to) { area.innerHTML = '<div class="error-card">From and To cannot be the same station.</div>'; return; }
+  if (!from || !to) {
+    area.innerHTML = '<div class="error-card">Please select both From and To stations.</div>';
+    return;
+  }
+  if (from === to) {
+    area.innerHTML = '<div class="error-card">From and To cannot be the same station.</div>';
+    return;
+  }
 
   area.innerHTML = '<div class="loading"><span class="spinner"></span>Finding your SahiSafar...</div>';
-
-  // Hide popular while loading
   popular.style.display = 'none';
 
   setTimeout(function(){
@@ -275,7 +284,7 @@ function doFind() {
     var result = dijkstra(graph, from, to);
 
     if (!result) {
-      area.innerHTML = '<div class="error-card">No route found. These stations may not be connected in current network.</div>';
+      area.innerHTML = '<div class="error-card">No route found between these stations.</div>';
       popular.style.display = 'block';
       return;
     }
@@ -284,7 +293,7 @@ function doFind() {
     var segments = buildSegments(path);
 
     if (!segments || segments.length === 0) {
-      area.innerHTML = '<div class="error-card">Could not build route segments. Please try again.</div>';
+      area.innerHTML = '<div class="error-card">Could not build route. Please try again.</div>';
       popular.style.display = 'block';
       return;
     }
@@ -293,22 +302,27 @@ function doFind() {
     var interchanges = segments.length - 1;
     var mins = Math.round(stops * 2.5 + interchanges * 5);
 
-    // TOTAL FARE = all segments added
+    // Total fare
     var totalFare = 0;
     var fareBreakdown = [];
     for (var fi = 0; fi < segments.length; fi++) {
-      var sf = calculateFare(segments[fi].stations.length - 1, segments[fi].line);
+      var sf = calculateFare(segments[fi].stations.length-1, segments[fi].line);
       totalFare += sf.fare;
-      fareBreakdown.push(LINES[segments[fi].line].shortName + ' ₹' + sf.fare);
+      fareBreakdown.push(LINES[segments[fi].line].shortName+' ₹'+sf.fare);
     }
 
     var crowd = getCrowdLevel();
-    var crowdLevel = CROWD_SCHEDULE[crowd.isWeekend ? 'weekend' : 'weekday'][crowd.hour];
+    var crowdLevel = CROWD_SCHEDULE[crowd.isWeekend?'weekend':'weekday'][crowd.hour];
 
+    // ── HEADER CARD ──
     var html = '<div class="card fade-in" style="margin-bottom:1rem">';
+
+    // Title row
     html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:1rem">';
-    html += '<div><div style="font-size:17px;font-weight:700">'+from+' → '+to+'</div>';
-    html += '<div style="font-size:12px;color:#767B99;margin-top:2px">'+LINES[segments[0].line].name+(interchanges>0?' + '+interchanges+' interchange(s)':'')+'</div></div>';
+    html += '<div>';
+    html += '<div style="font-size:17px;font-weight:700;color:#0D0F1A">'+from+' → '+to+'</div>';
+    html += '<div style="font-size:12px;color:#767B99;margin-top:3px">'+interchanges+' interchange'+(interchanges!==1?'s':'')+' • '+stops+' stops • ~'+mins+' min</div>';
+    html += '</div>';
     html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
     html += '<span class="chip chip-info">🚉 '+stops+' stops</span>';
     html += '<span class="chip chip-success">⏱ ~'+mins+' min</span>';
@@ -316,14 +330,21 @@ function doFind() {
     html += '<span class="chip" style="background:'+CROWD_COLORS[crowdLevel]+'20;color:'+CROWD_COLORS[crowdLevel]+'">'+CROWD_EMOJIS[crowdLevel]+' '+CROWD_LABELS[crowdLevel]+'</span>';
     html += '</div></div>';
 
-    // Fare breakdown if multi-line
+    // Fare breakdown
     if (fareBreakdown.length > 1) {
-      html += '<div style="background:#E8F5E9;border-radius:8px;padding:8px 12px;font-size:12.5px;color:#1B5E20;margin-bottom:12px">';
-      html += '💰 Fare breakdown: '+fareBreakdown.join(' + ')+' = <strong>Total ₹'+totalFare+'</strong></div>';
+      html += '<div style="background:#E8F5E9;border-radius:8px;padding:8px 12px;font-size:12px;color:#1B5E20;margin-bottom:12px">';
+      html += '💰 Fare breakdown: '+fareBreakdown.join(' + ')+' = <strong>Total ₹'+totalFare+'</strong>';
+      html += '</div>';
     }
 
-    html += '<div style="overflow-x:auto;padding:1rem 0"><div style="display:flex;align-items:flex-start;min-width:max-content" id="track"></div></div>';
-    html += '<div id="segList" style="margin-top:1rem"></div>';
+    // Journey visual track
+    html += '<div style="overflow-x:auto;padding:1rem 0">';
+    html += '<div id="track" style="display:flex;align-items:flex-start;min-width:max-content"></div>';
+    html += '</div>';
+
+    // Segment list title
+    html += '<div style="font-size:12px;font-weight:600;color:#767B99;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;margin-top:4px">Step by Step Journey</div>';
+    html += '<div id="segList"></div>';
     html += '</div>';
 
     // AI Tips
@@ -339,11 +360,9 @@ function doFind() {
     html += '</div></div>';
 
     area.innerHTML = html;
-
-    // Show popular BELOW result
     popular.style.display = 'block';
 
-   // Build visual track
+    // ── BUILD VISUAL TRACK ──
     var track = document.getElementById('track');
     for (var si = 0; si < segments.length; si++) {
       var seg = segments[si];
@@ -352,12 +371,11 @@ function doFind() {
         var isStart = (si===0 && i===0);
         var isEnd = (si===segments.length-1 && i===seg.stations.length-1);
         var isChange = (i===seg.stations.length-1) && (si<segments.length-1);
-
         var d = document.createElement('div');
         d.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:5px';
         d.innerHTML = '<div style="width:'+(isStart||isEnd?20:14)+'px;height:'+(isStart||isEnd?20:14)+'px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2.5px '+ld.color+';background:'+(isStart||isEnd?ld.color:'#fff')+'"></div>'
           +'<div style="font-size:11px;max-width:72px;text-align:center;line-height:1.35;font-weight:'+((i===0||i===seg.stations.length-1)?'600':'400')+';color:'+((i===0||i===seg.stations.length-1)?'#0D0F1A':'#767B99')+'">'+seg.stations[i]
-          +(isChange?'<div style="background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;border-radius:4px;font-size:9px;padding:1px 5px;margin-top:2px">Change here</div>':'')
+          +(isChange?'<div style="background:#FFF3E0;color:#E65100;border:1px solid #FFCC80;border-radius:4px;font-size:9px;padding:1px 5px;margin-top:2px">Change</div>':'')
           +'</div>';
         track.appendChild(d);
         if (i < seg.stations.length-1) {
@@ -372,40 +390,36 @@ function doFind() {
         track.appendChild(dash);
       }
     }
-      if (si < segments.length-1) {
-        var dash = document.createElement('div');
-        dash.style.cssText = 'width:44px;border-top:3px dashed #ccc;flex-shrink:0;margin-top:10px';
-        track.appendChild(dash);
-      }
-    }
 
-    // Segment list
+    // ── BUILD SEGMENT LIST ──
     var segList = document.getElementById('segList');
     for (var si = 0; si < segments.length; si++) {
       var seg = segments[si];
       var ld = LINES[seg.line];
       var sf = calculateFare(seg.stations.length-1, seg.line);
+      var isLast = si === segments.length-1;
       var row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(26,35,126,0.12)';
+      row.className = 'seg-row';
       row.innerHTML =
-        '<div style="width:16px;height:16px;border-radius:50%;background:'+ld.color+';flex-shrink:0"></div>'
-        +'<div style="flex:1">'
-        +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">'
-        +'<strong style="font-size:13px">'+ld.name+'</strong>'
-        +'<span style="background:'+ld.color+';color:'+ld.textColor+';font-size:10px;padding:2px 7px;border-radius:99px;font-weight:600">'+ld.shortName+'</span>'
+        '<div style="width:18px;height:18px;border-radius:50%;background:'+ld.color+';flex-shrink:0;margin-top:2px"></div>'
+        +'<div class="seg-info">'
+        +'<div class="seg-title">'
+        +'<strong style="font-size:13px;color:#0D0F1A">'+ld.name+'</strong>'
+        +'<span class="seg-badge" style="background:'+ld.color+';color:'+ld.textColor+'">'+ld.shortName+'</span>'
         +'</div>'
-        +'<div style="font-size:12px;color:#767B99">🚉 Board: <strong>'+seg.stations[0]+'</strong></div>'
-        +'<div style="font-size:12px;color:#767B99">🏁 Alight: <strong>'+seg.stations[seg.stations.length-1]+'</strong></div>'
-        +(si < segments.length-1 ? '<div style="font-size:11px;color:#E65100;margin-top:3px">🔄 Change train here</div>' : '')
+        +'<div class="seg-detail">🚉 Board: <strong>'+seg.stations[0]+'</strong></div>'
+        +'<div class="seg-detail">🏁 Alight: <strong>'+seg.stations[seg.stations.length-1]+'</strong></div>'
+        +(!isLast?'<div class="seg-change">🔄 Change train at '+seg.stations[seg.stations.length-1]+'</div>':'')
         +'</div>'
-        +'<div style="text-align:right;flex-shrink:0">'
-        +'<div style="font-size:13px;font-weight:700;color:#1A237E">'+( seg.stations.length-1)+' stops</div>'
-        +'<div style="font-size:11px;color:#767B99">₹'+sf.fare+'</div>'
+        +'<div class="seg-stats">'
+        +'<div class="seg-stops">'+(seg.stations.length-1)+' stops</div>'
+        +'<div class="seg-fare">₹'+sf.fare+'</div>'
         +'</div>';
       segList.appendChild(row);
     }
-    // Scroll to result smoothly
-    area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Smooth scroll to result
+    area.scrollIntoView({behavior:'smooth', block:'start'});
 
   }, 400);
 }
